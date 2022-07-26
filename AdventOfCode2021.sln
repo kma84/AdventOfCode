@@ -25,7 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia10", "dia10\dia10.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia11", "dia11\dia11.csproj", "{9471EF65-C3DE-476F-B2D6-BDF692ED938E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dia12", "dia12\dia12.csproj", "{37B92680-E03F-478D-8CEE-D23F559B350C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia12", "dia12\dia12.csproj", "{37B92680-E03F-478D-8CEE-D23F559B350C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dia13", "dia13\dia13.csproj", "{1E01353D-F17D-44E7-833B-ACC10C6B8C19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,10 @@ Global
 		{37B92680-E03F-478D-8CEE-D23F559B350C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37B92680-E03F-478D-8CEE-D23F559B350C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37B92680-E03F-478D-8CEE-D23F559B350C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E01353D-F17D-44E7-833B-ACC10C6B8C19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E01353D-F17D-44E7-833B-ACC10C6B8C19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E01353D-F17D-44E7-833B-ACC10C6B8C19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E01353D-F17D-44E7-833B-ACC10C6B8C19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
