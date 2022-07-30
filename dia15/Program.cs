@@ -2,6 +2,7 @@
 using AoCUtils;
 
 bool debug = false;
+string input = debug ? "inputTest.txt" : "input.txt";
 
 Part1();
 
@@ -10,17 +11,20 @@ Part2();
 
 void Part1()
 {
-    Node[,] matrix = GetInput("input.txt");
-
-    if (debug)
-        matrix.Print();
+    Node[,] matrix = GetInput(input);
 
     // Según el enunciado en el nodo inicial no se cuenta el riesgo
     matrix[0, 0].Risk = 0;
 
     List<(Node startNode, Node endNode, long cost)> edges = GetEdges(matrix);
 
-    var path = GraphExtensions.DijkstraShortestPath(edges, matrix[0, 0], matrix[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1]);
+    // Dijkstra
+    //var path = GraphExtensions.DijkstraShortestPath(edges, matrix[0, 0], matrix[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1]);
+
+    // A Star
+    long GetEstimatedCost(Node node) => matrix.GetLength(0) - node.MatrixCoordinateY + matrix.GetLength(1) - node.MatrixCoordinateX - 2;
+    var path = GraphExtensions.AStarShortestPath(edges, matrix[0, 0], matrix[matrix.GetLength(0) - 1, matrix.GetLength(1) - 1], GetEstimatedCost);
+
     path.ForEach(n => n.Selected = true);
 
     if (debug)
@@ -35,7 +39,7 @@ void Part2()
     int GetNewRisk(int baseRisk, int tileX, int tileY) => ((baseRisk - 1 + tileY + tileX) % 9) + 1;
 
     const int numTiles = 5;
-    Node[,] matrix = GetInput("input.txt");
+    Node[,] matrix = GetInput(input);
 
     Node[,] newMatrix = new Node[matrix.GetLength(0) * numTiles, matrix.GetLength(1) * numTiles];
 
@@ -61,7 +65,14 @@ void Part2()
 
     List<(Node startNode, Node endNode, long cost)> edges = GetEdges(newMatrix);
 
-    var path = GraphExtensions.DijkstraShortestPath(edges, newMatrix[0, 0], newMatrix[newMatrix.GetLength(0) - 1, newMatrix.GetLength(1) - 1]);
+    // Dijkstra
+    //var path = GraphExtensions.DijkstraShortestPath(edges, newMatrix[0, 0], newMatrix[newMatrix.GetLength(0) - 1, newMatrix.GetLength(1) - 1]);
+
+    // A Star
+    long GetEstimatedCost(Node node) => newMatrix.GetLength(0) - node.MatrixCoordinateY + newMatrix.GetLength(1) - node.MatrixCoordinateX - 2;
+    Node target = newMatrix[newMatrix.GetLength(0) - 1, newMatrix.GetLength(1) - 1];
+    var path = GraphExtensions.AStarShortestPath(edges, newMatrix[0, 0], target, GetEstimatedCost);
+
     path.ForEach(n => n.Selected = true);
 
     if (debug)

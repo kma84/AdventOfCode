@@ -34,16 +34,45 @@ namespace AoCUtils
                 }
             }
 
-            Stack<T> path = new();
-            T? currentPathNode = target;
+            return GetPath(prev, target);
+        }
 
-            while (currentPathNode != default)
+        public static List<T> AStarShortestPath<T>(List<(T startNode, T endNode, long cost)> edges, T source, T target, Func<T, long> h)
+            where T : class
+        {
+            PriorityQueue<T, long> openSet = new();
+            Dictionary<T, T?> prev = new() { { source, default } };
+            Dictionary<T, long> dist = new() { { source, 0 } };
+            Dictionary<T, long> hdist = new() { { source, h(source) } };
+
+            Dictionary<T, Dictionary<T, long>> graph = GetGraph(edges);
+            openSet.Enqueue(source, 0);
+
+            while (openSet.Count > 0)
             {
-                path.Push(currentPathNode);
-                currentPathNode = prev[currentPathNode];
+                T currentNode = openSet.Dequeue();
+
+                if (currentNode == target)
+                {
+                    return GetPath(prev, currentNode);
+                }
+
+                foreach (T adjacentNode in graph[currentNode].Keys)
+                {
+                    long tryDist = dist[currentNode] + graph[currentNode][adjacentNode];
+
+                    if (!dist.ContainsKey(adjacentNode) || tryDist < dist[adjacentNode])
+                    {
+                        prev[adjacentNode] = currentNode;
+                        dist[adjacentNode] = tryDist;
+                        hdist[adjacentNode] = tryDist + h(adjacentNode);
+                        
+                        openSet.Enqueue(adjacentNode, dist[adjacentNode]);
+                    }
+                }
             }
 
-            return path.ToList();
+            return new List<T>();
         }
 
         private static Dictionary<T, Dictionary<T, long>> GetGraph<T>(List<(T startNode, T endNode, long cost)> edges) where T : class
@@ -63,9 +92,18 @@ namespace AoCUtils
             return graph;
         }
 
-        public static void DijkstraShortestPaths()
+        private static List<T> GetPath<T>(Dictionary<T, T?> prev, T target) where T : class
         {
-            throw new NotImplementedException();
+            Stack<T> path = new();
+            T? currentPathNode = target;
+
+            while (currentPathNode != default)
+            {
+                path.Push(currentPathNode);
+                currentPathNode = prev[currentPathNode];
+            }
+
+            return path.ToList();
         }
 
     }
