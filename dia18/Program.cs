@@ -1,11 +1,15 @@
 ﻿
+using dia18;
+
 bool debug = false;
-string input = debug ? "inputTest2.txt" : "input.txt";
+string input = debug ? "inputTest1.txt" : "input.txt";
 
 
 Part1();
-
 Part2();
+
+ImprovedVersion.Part1(input);
+ImprovedVersion.Part2(input);
 
 
 void Part1()
