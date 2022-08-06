@@ -139,7 +139,7 @@ void PrintMap(List<(int x, int y)> points, ((int, int) x, (int, int) y) targetCo
 ((int, int) x, (int, int) y) GetInput(string filename)
 {
     string input =
-    File.ReadAllText(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "inputs" + Path.DirectorySeparatorChar + filename);
+        File.ReadAllText(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "inputs" + Path.DirectorySeparatorChar + filename);
 
     string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
     string[] partsX = parts[2].Split(new char[] { '.', '=', ',' }, StringSplitOptions.RemoveEmptyEntries);
