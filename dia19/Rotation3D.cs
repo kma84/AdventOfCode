@@ -25,24 +25,25 @@ namespace dia19
             for (int i = 0; i < degrees.Length; i++)
             {
                 radians = GetRadians(degrees[i]);
-                newX = (int)Math.Round(x * Math.Cos(radians) - y * Math.Sin(radians));
-                newY = (int)Math.Round(x * Math.Sin(radians) + y * Math.Cos(radians));
-                x = newX;
+                newY = (int)Math.Round(y * Math.Cos(radians) - z * Math.Sin(radians));
+                newZ = (int)Math.Round(y * Math.Sin(radians) + z * Math.Cos(radians));
+                z = newZ;
                 y = newY;
+
 
                 for (int j = 0; j < degrees.Length; j++)
                 {
                     radians = GetRadians(degrees[j]);
-                    newY = (int)Math.Round(y * Math.Cos(radians) - z * Math.Sin(radians));
-                    newZ = (int)Math.Round(y * Math.Sin(radians) + z * Math.Cos(radians));
+                    newZ = (int)Math.Round(z * Math.Cos(radians) - x * Math.Sin(radians));
+                    newX = (int)Math.Round(z * Math.Sin(radians) + x * Math.Cos(radians));
                     z = newZ;
-                    y = newY;
+                    x = newX;
 
                     for (int k = 0; k < degrees.Length; k++)
                     {
                         radians = GetRadians(degrees[k]);
-                        newZ = (int)Math.Round(z * Math.Cos(radians) - x * Math.Sin(radians));
-                        newX = (int)Math.Round(z * Math.Sin(radians) + x * Math.Cos(radians));
+                        newX = (int)Math.Round(x * Math.Cos(radians) - y * Math.Sin(radians));
+                        newY = (int)Math.Round(x * Math.Sin(radians) + y * Math.Cos(radians));
 
                         if (points.Add((newX, newY, newZ)))
                         {
