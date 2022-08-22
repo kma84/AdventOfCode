@@ -32,12 +32,84 @@ void Part1()
 
 void Part2()
 {
+    List<Scanner> scanners = GetInput(Config.input);
+
+    for (int i = 0; i < scanners.Count; i++)
+    {
+        for (int j = 0; j < scanners.Count; j++)
+        {
+            if (i == j)
+                continue;
+
+            Intersect(scanners[i], scanners[j]);
+        }
+    }
+
+    HashSet<(int x, int y, int z)> scannersPoints = new() { (0, 0, 0) };
+    scanners[0].Merged = true;
+    foreach (Collision collision in scanners[0].Collisions.Where(c => !c.TargetScanner.Merged))
+    {
+        collision.TargetScanner.Merged = true;
+        scannersPoints.UnionWith(GetScannerPointsRelativeToA(scanners[0], collision.TargetScanner, collision.SourcePoint, collision.TargetPoint));
+    }
+
+    List<(int x, int y, int z)> lstScannersPoints = new(scannersPoints);
+    int maxManhattanDistance = 0;
+
+    int iOffset = 0;
+    for (int i = 0; i < lstScannersPoints.Count; i++)
+    {
+        for (int j = iOffset; j < lstScannersPoints.Count; j++)
+        {
+            maxManhattanDistance = Math.Max(maxManhattanDistance, GetManhattanDistance(lstScannersPoints[i], lstScannersPoints[j]));
+        }
+
+        iOffset++;
+    }
+
+    Console.WriteLine("Part2. Largest manhattan distance: " + maxManhattanDistance);
+}
+
+
+int GetManhattanDistance((int x, int y, int z) pointA, (int x, int y, int z) pointB)
+{
+    return Math.Abs(pointA.x - pointB.x) + Math.Abs(pointA.y - pointB.y) + Math.Abs(pointA.z - pointB.z);
+}
+
+
+List<(int x, int y, int z)> GetScannerPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
+{
+    foreach (string rotation in Config.ROTATIONS)
+    {
+        (int x, int y, int z) rotatedBPoint = RotatePoint(pointB, rotation);
+        (int x, int y, int z) scannerCoordsRelToA = (pointA.x - rotatedBPoint.x, pointA.y - rotatedBPoint.y, pointA.z - rotatedBPoint.z);
+
+        List<(int x, int y, int z)> lstRotatedPoints = new(RotatePoints(scannerB.Beacons, rotation));
+        List<(int x, int y, int z)> lstRotatedPointsRelToA = SumScannerCoords(lstRotatedPoints, scannerCoordsRelToA);
+
+        var intersection = scannerA.Beacons.Intersect(lstRotatedPointsRelToA);
+        if (intersection.Count() >= Config.MIN_OVERLAPPING_BEACONS - 1)
+        {
+            HashSet<(int x, int y, int z)> hSetScannerPoints = new() { scannerCoordsRelToA };
+
+            foreach (Collision collision in scannerB.Collisions.Where(c => !c.TargetScanner.Merged))
+            {
+                collision.TargetScanner.Merged = true;
+                var newpoints = GetScannerPointsRelativeToA(scannerB, collision.TargetScanner, collision.SourcePoint, collision.TargetPoint);
+                var newPointsRotated = RotatePoints(newpoints, rotation);
+                hSetScannerPoints.UnionWith(SumScannerCoords(newPointsRotated, scannerCoordsRelToA));
+            }
+
+            return hSetScannerPoints.ToList();
+        }
+    }
+
+    throw new Exception($"Collision not found. {scannerA}-{scannerB}");
 }
 
 
 List<(int x, int y, int z)> GetPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
 {
-
     foreach (string rotation in Config.ROTATIONS)
     {
         (int x, int y, int z) rotatedBPoint = RotatePoint(pointB, rotation);
