@@ -1,9 +1,8 @@
 ﻿
-using AdventOfCode.Core;
-using AdventOfCode.Core.Interfaces;
+using AdventOfCode.Generator.Properties;
 
 
-var argsHelper = ArgsHelper.CreateFromArgs(args);
+ArgsHelper argsHelper = ArgsHelper.CreateFromArgs(args);
 
 if (!argsHelper.Validated)
 {
@@ -12,38 +11,32 @@ if (!argsHelper.Validated)
     return;
 }
 
-RunProblems(argsHelper.Years, argsHelper.Days);
+GenerateCode(argsHelper.Years, argsHelper.Days);
 
 
-void RunProblems(List<int> years, List<int> days)
+void GenerateCode(List<int> years, List<int> days)
 {
-    var iProblemType = typeof(IProblem);
-    var problemTypes = AppDomain.CurrentDomain.GetAssemblies()
-        .SelectMany(a => a.GetTypes())
-        .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass);
-
-    Dictionary<ProblemAttribute, Type> dictProblems = problemTypes.ToDictionary(t => (ProblemAttribute)t.GetCustomAttributes(typeof(ProblemAttribute), true).First());
-
     foreach (int year in years)
     {
         foreach (int day in days)
         {
-            var problemMeta = dictProblems.Keys.FirstOrDefault(pa => pa.Year == year && pa.Day == day);
+            string dayPath = GetDayPath(year, day);
 
-            if (problemMeta != null)
+            if (!Directory.Exists(dayPath))
             {
-                IProblem? problem = (IProblem?)Activator.CreateInstance(dictProblems[problemMeta]);
-                string input = File.ReadAllText(GetInputPath(year, day));
+                Directory.CreateDirectory(dayPath);
 
-                Console.WriteLine($"Year {year}, Day {day}, Problem: {problemMeta.ProblemName}");
-                Console.WriteLine($"Part1: {problem?.Part1(input)}");
-                Console.WriteLine($"Part1: {problem?.Part2(input)}");
+                File.WriteAllText(dayPath + "Problem.cs", string.Format(Resources.ProblemTemplate, year, day));
+                File.Create(dayPath + "input.txt");
+                File.Create(dayPath + "debugInput.txt");
+
+                // TODO Modificar .csproj para incluir input.txt y debugInput.txt en el resultado de la compilación
+
+                Console.WriteLine($"Files generated for year {year} day {day}");
             }
         }
     }
 }
-
-string GetInputPath(int year, int day) => GetDayPath(year, day) + "input.txt";
 
 string GetDayPath(int year, int day)
 {
@@ -60,7 +53,6 @@ class ArgsHelper
     public List<int> Days { get; set; } = new();
     public bool Validated { get; set; }
 
-    // TODO Use regex to match accepted combinations of args
     public static ArgsHelper CreateFromArgs(string[] args)
     {
         static List<int> GetDays(string? arg)
@@ -91,7 +83,7 @@ class ArgsHelper
                 return result;
             }
         }
-
+        
         // Not validated result
         return result;
     }
