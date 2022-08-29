@@ -2,7 +2,7 @@
   "profiles": {
     "AdventOfCode.Generator": {
       "commandName": "Project",
-      "commandLineArgs": "2021 1"
+      "commandLineArgs": "2021"
     }
   }
 }
