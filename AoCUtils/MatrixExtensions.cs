@@ -38,6 +38,20 @@ namespace AoCUtils
         }
 
 
+        public static int Count<T>(this T[,] matrix, Func<T, bool> predicate)
+        {
+            int count = 0;
+
+            foreach (T item in matrix)
+            {
+                if (predicate(item))
+                    count++;
+            }
+
+            return count;
+        }
+
+
         public static List<(int x, int y, T value)> GetCrossAdjacents<T>(this T[,] matrix, int x, int y)
         {
             CheckBounds(matrix, x, y);

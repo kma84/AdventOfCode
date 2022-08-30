@@ -33,7 +33,7 @@ void RunProblems(List<int> years, List<int> days)
             if (problemMeta != null)
             {
                 IProblem? problem = (IProblem?)Activator.CreateInstance(dictProblems[problemMeta]);
-                string input = File.ReadAllText(GetInputPath(year, day));
+                string input = File.ReadAllText(GetInputPath(year, day, problem?.Debug ?? false));
 
                 Console.WriteLine($"Year {year}, Day {day}, Problem: {problemMeta.ProblemName}");
                 Console.WriteLine($"Part1: {problem?.Part1(input)}");
@@ -43,7 +43,7 @@ void RunProblems(List<int> years, List<int> days)
     }
 }
 
-string GetInputPath(int year, int day) => GetDayPath(year, day) + "input.txt";
+string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? "debugInput.txt" : "input.txt");
 
 string GetDayPath(int year, int day)
 {
