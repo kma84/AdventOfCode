@@ -37,7 +37,8 @@ void RunProblems(List<int> years, List<int> days)
 
                 Console.WriteLine($"Year {year}, Day {day}, Problem: {problemMeta.ProblemName}");
                 Console.WriteLine($"Part1: {problem?.Part1(input)}");
-                Console.WriteLine($"Part1: {problem?.Part2(input)}");
+                Console.WriteLine($"Part2: {problem?.Part2(input)}");
+                Console.WriteLine();
             }
         }
     }
