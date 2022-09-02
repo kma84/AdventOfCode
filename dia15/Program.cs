@@ -1,5 +1,7 @@
 ﻿
-using AoCUtils;
+
+
+using AdventOfCode.Utils;
 
 bool debug = false;
 string input = debug ? "inputTest.txt" : "input.txt";

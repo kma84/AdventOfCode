@@ -120,6 +120,7 @@
   <data name="ProblemTemplate" xml:space="preserve">
     <value>using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year{0}.Day{1:D2}
 {{

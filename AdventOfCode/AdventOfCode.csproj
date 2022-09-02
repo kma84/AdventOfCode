@@ -19,6 +19,9 @@
     <None Remove="Year2021\Day03\input.txt" />
     <None Remove="Year2021\Day03\debugInput.txt" />
     <None Remove="Year2021\Day03\solutions.txt" />
+    <None Remove="Year2021\Day04\input.txt" />
+    <None Remove="Year2021\Day04\debugInput.txt" />
+    <None Remove="Year2021\Day04\solutions.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Year2021\Day01\input.txt">
@@ -54,8 +57,22 @@
     <Content Include="Year2021\Day03\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Year2021\Day04\input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day04\debugInput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day04\solutions.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AoCUtils\AoCUtils.csproj" />
+    <ProjectReference Include="..\AdventOfCode.Utils\AdventOfCode.Utils.csproj" />
   </ItemGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties properties_4launchsettings_1json__JsonSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

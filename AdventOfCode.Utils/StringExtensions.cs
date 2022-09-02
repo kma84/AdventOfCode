@@ -1,4 +1,5 @@
-﻿namespace AoCUtils
+﻿
+namespace AdventOfCode.Utils
 {
     public static class StringExtensions
     {

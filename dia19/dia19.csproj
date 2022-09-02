@@ -25,8 +25,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AoCUtils\AoCUtils.csproj" />
-  </ItemGroup>
-
 </Project>

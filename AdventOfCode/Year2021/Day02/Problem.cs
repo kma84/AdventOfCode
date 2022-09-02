@@ -1,7 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AoCUtils;
-using static AdventOfCode.Year2021.Day02.Problem;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year2021.Day02
 {

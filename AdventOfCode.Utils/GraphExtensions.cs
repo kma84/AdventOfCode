@@ -1,5 +1,5 @@
 ﻿
-namespace AoCUtils
+namespace AdventOfCode.Utils
 {
     public static class GraphExtensions
     {

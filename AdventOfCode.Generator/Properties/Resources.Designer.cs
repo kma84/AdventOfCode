@@ -63,6 +63,7 @@ namespace AdventOfCode.Generator.Properties {
         /// <summary>
         ///   Busca una cadena traducida similar a using AdventOfCode.Core;
         ///using AdventOfCode.Core.Interfaces;
+        ///using AdventOfCode.Utils;
         ///
         ///namespace AdventOfCode.Year{0}.Day{1:D2}
         ///{{

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day3", "day3\day3.csproj", "{F82A38A6-FA2D-487E-9D68-251E93EDEEE1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day4", "day4\day4.csproj", "{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day5", "day5\day5.csproj", "{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}"
@@ -27,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia13", "dia13\dia13.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia14", "dia14\dia14.csproj", "{522727AD-60A9-4DF9-9EE8-88F282CEFFFC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AoCUtils", "AoCUtils\AoCUtils.csproj", "{4E69438E-826C-4B4C-B82B-291AADC38DB4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia15", "dia15\dia15.csproj", "{611D40D9-29F8-4966-82C1-E5F36637D04D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia16", "dia16\dia16.csproj", "{7D47313C-598C-4974-A13F-C8C70151289E}"
@@ -43,16 +39,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode", "AdventOfCod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Generator", "AdventOfCode.Generator\AdventOfCode.Generator.csproj", "{20F7779A-81E1-466F-9337-2114F08FDB76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Utils", "AdventOfCode.Utils\AdventOfCode.Utils.csproj", "{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F82A38A6-FA2D-487E-9D68-251E93EDEEE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F82A38A6-FA2D-487E-9D68-251E93EDEEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F82A38A6-FA2D-487E-9D68-251E93EDEEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F82A38A6-FA2D-487E-9D68-251E93EDEEE1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -97,10 +91,6 @@ Global
 		{522727AD-60A9-4DF9-9EE8-88F282CEFFFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{522727AD-60A9-4DF9-9EE8-88F282CEFFFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{522727AD-60A9-4DF9-9EE8-88F282CEFFFC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E69438E-826C-4B4C-B82B-291AADC38DB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E69438E-826C-4B4C-B82B-291AADC38DB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E69438E-826C-4B4C-B82B-291AADC38DB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E69438E-826C-4B4C-B82B-291AADC38DB4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{611D40D9-29F8-4966-82C1-E5F36637D04D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{611D40D9-29F8-4966-82C1-E5F36637D04D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{611D40D9-29F8-4966-82C1-E5F36637D04D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -129,6 +119,10 @@ Global
 		{20F7779A-81E1-466F-9337-2114F08FDB76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20F7779A-81E1-466F-9337-2114F08FDB76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20F7779A-81E1-466F-9337-2114F08FDB76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AoCUtils;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year2021.Day03
 {
@@ -57,7 +57,7 @@ namespace AdventOfCode.Year2021.Day03
 
                 candidatos = candidatos.Where(num => num.ElementAt(i) == masComun).ToList();
 
-                if (candidatos.Count() == 1)
+                if (candidatos.Count == 1)
                 {
                     oxygenGeneratorRatingStr = candidatos.First();
                 }
@@ -73,7 +73,7 @@ namespace AdventOfCode.Year2021.Day03
 
                 candidatos = candidatos.Where(num => num.ElementAt(i) == menosComun).ToList();
 
-                if (candidatos.Count() == 1)
+                if (candidatos.Count == 1)
                 {
                     co2ScrubberRatingStr = candidatos.First();
                 }

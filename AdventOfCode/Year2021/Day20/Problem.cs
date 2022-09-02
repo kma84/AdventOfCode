@@ -1,6 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AoCUtils;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year2021.Day20
 {
@@ -188,7 +188,7 @@ namespace AdventOfCode.Year2021.Day20
         private static List<char> GetInfinitePixels(string enhancementAlgorithm)
         {
             char firstPixel = enhancementAlgorithm[0];
-            List<char> infinitePixels = new List<char> { firstPixel };
+            List<char> infinitePixels = new() { firstPixel };
 
             if (firstPixel == LIGHT_PIXEL)
                 infinitePixels.Insert(0, enhancementAlgorithm.Last());

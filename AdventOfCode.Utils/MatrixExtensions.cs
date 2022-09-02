@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AoCUtils
+namespace AdventOfCode.Utils
 {
     public static class MatrixExtensions
     {
