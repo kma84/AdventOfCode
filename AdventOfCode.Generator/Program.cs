@@ -37,9 +37,11 @@ void GenerateFiles(List<int> years, List<int> days)
                 File.WriteAllText(dayPath + "Problem.cs", string.Format(Resources.ProblemTemplate, year, day));
                 File.Create(dayPath + "input.txt");
                 File.Create(dayPath + "debugInput.txt");
+                File.Create(dayPath + "solutions.txt");
 
                 UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "input.txt"));
                 UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "debugInput.txt"));
+                UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "solutions.txt"));
 
                 Console.WriteLine($"Files generated for year {year} day {day}");
             }
