@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day4", "day4\day4.csproj", "{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day5", "day5\day5.csproj", "{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "day6", "day6\day6.csproj", "{3EAB148D-9CE8-4739-9FCE-A6F599121E7F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia7", "dia7\dia7.csproj", "{EA091761-0748-4B8A-81C7-0DF05224A5F4}"
@@ -39,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode", "AdventOfCod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Generator", "AdventOfCode.Generator\AdventOfCode.Generator.csproj", "{20F7779A-81E1-466F-9337-2114F08FDB76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Utils", "AdventOfCode.Utils\AdventOfCode.Utils.csproj", "{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Utils", "AdventOfCode.Utils\AdventOfCode.Utils.csproj", "{82F0D5AB-D58C-42E7-90EA-4F6F17A186B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,14 +43,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15D4D8F1-90BF-4D36-846D-26FFC5EF3AD2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{29F51EE7-63C5-4E88-AECD-E7C31A2648D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3EAB148D-9CE8-4739-9FCE-A6F599121E7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3EAB148D-9CE8-4739-9FCE-A6F599121E7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EAB148D-9CE8-4739-9FCE-A6F599121E7F}.Release|Any CPU.ActiveCfg = Release|Any CPU

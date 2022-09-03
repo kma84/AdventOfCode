@@ -11,17 +11,16 @@
     <None Remove="Year2021\Day01\input.txt" />
     <None Remove="Year2021\Day01\solutions.txt" />
     <None Remove="Year2021\Day02\input.txt" />
-    <None Remove="Year2021\Day02\debugInput.txt" />
     <None Remove="Year2021\Day02\solutions.txt" />
     <None Remove="Year2021\Day20\input.txt" />
     <None Remove="Year2021\Day20\debugInput.txt" />
     <None Remove="Year2021\Day20\solutions.txt" />
     <None Remove="Year2021\Day03\input.txt" />
-    <None Remove="Year2021\Day03\debugInput.txt" />
     <None Remove="Year2021\Day03\solutions.txt" />
     <None Remove="Year2021\Day04\input.txt" />
-    <None Remove="Year2021\Day04\debugInput.txt" />
     <None Remove="Year2021\Day04\solutions.txt" />
+    <None Remove="Year2021\Day05\input.txt" />
+    <None Remove="Year2021\Day05\solutions.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Year2021\Day01\input.txt">
@@ -31,9 +30,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2021\Day02\input.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Year2021\Day02\debugInput.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2021\Day02\solutions.txt">
@@ -51,19 +47,19 @@
     <Content Include="Year2021\Day03\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Year2021\Day03\debugInput.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Year2021\Day03\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2021\Day04\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Year2021\Day04\debugInput.txt">
+    <Content Include="Year2021\Day04\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Year2021\Day04\solutions.txt">
+    <Content Include="Year2021\Day05\input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day05\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,47 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using AdventOfCode.Core;
+using AdventOfCode.Core.Interfaces;
+using AdventOfCode.Utils;
 
-namespace day5
+namespace AdventOfCode.Year2021.Day05
 {
-    class Program
+    [Problem(Year = 2021, Day = 5, ProblemName = "Hydrothermal Venture")]
+    internal class Problem : IProblem
     {
-        public class Punto
+        public bool Debug { get; set; } = false;
+
+        public string Part1(string input)
         {
-            public int X { get; set; }
-            public int Y { get; set; }
+            return CalcularPuntosCoincidentes(GetLineas(input), filtrarLineasVerticalesYHorizontales: true).ToString();
+        }
+
+        public string Part2(string input)
+        {
+            return CalcularPuntosCoincidentes(GetLineas(input), filtrarLineasVerticalesYHorizontales: false).ToString();
         }
 
 
-        public class Linea
+        private static List<Linea> GetLineas(string input)
         {
-            public Punto PuntoInicial { get; set; }
-            public Punto PuntoFinal { get; set; }
-            public List<Punto> Puntos { get; set; }
+            string[] filas = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
+
+            List<Linea> lineas = new();
+
+            foreach (string fila in filas)
+            {
+                int[] coordenadas = fila.Split(new[] { ",", " -> " }, StringSplitOptions.RemoveEmptyEntries).Select(c => int.Parse(c)).ToArray();
+
+                lineas.Add(new Linea
+                (
+                    puntoInicial: new Punto { X = coordenadas[0], Y = coordenadas[1] },
+                    puntoFinal: new Punto { X = coordenadas[2], Y = coordenadas[3] },
+                    puntos: new List<Punto>()
+                ));
+            }
+
+            return lineas;
         }
 
 
-        static void Main(string[] args)
-        {
-            List<Linea> lineas = GetLineas();
-
-            CalcularPuntosCoincidentes(lineas, filtrarLineasVerticalesYHorizontales: true);
-            CalcularPuntosCoincidentes(lineas, filtrarLineasVerticalesYHorizontales: false);
-        }
-
-
-        private static void CalcularPuntosCoincidentes(List<Linea> lineas, bool filtrarLineasVerticalesYHorizontales)
+        private int CalcularPuntosCoincidentes(List<Linea> lineas, bool filtrarLineasVerticalesYHorizontales)
         {
             List<Linea> lineasCalculo = new();
 
             lineas.ForEach((l) =>
             {
-                lineasCalculo.Add(new Linea { 
-                    PuntoInicial = new Punto { X = l.PuntoInicial.X, Y = l.PuntoInicial.Y },
-                    PuntoFinal = new Punto { X = l.PuntoFinal.X, Y = l.PuntoFinal.Y },
-                    Puntos = new()
-                });
+                lineasCalculo.Add(new Linea
+                (
+                    puntoInicial: new Punto { X = l.PuntoInicial.X, Y = l.PuntoInicial.Y },
+                    puntoFinal: new Punto { X = l.PuntoFinal.X, Y = l.PuntoFinal.Y },
+                    puntos: new()
+                ));
             });
 
             int maxX = Math.Max(lineasCalculo.Max(l => l.PuntoInicial.X), lineasCalculo.Max(l => l.PuntoFinal.X));
@@ -74,7 +86,10 @@ namespace day5
                 }
             }
 
-            Console.WriteLine($"Puntos coincidentes: {numPuntosCoincidentes}. Líneas verticales y horizontales filtradas: {filtrarLineasVerticalesYHorizontales}");
+            if (Debug)
+                Console.WriteLine($"Puntos coincidentes: {numPuntosCoincidentes}. L�neas verticales y horizontales filtradas: {filtrarLineasVerticalesYHorizontales}");
+
+            return numPuntosCoincidentes;
         }
 
 
@@ -129,27 +144,25 @@ namespace day5
         };
 
 
-        private static List<Linea> GetLineas()
+        public class Punto
         {
-            string input =
-                File.ReadAllText(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "inputs" + Path.DirectorySeparatorChar + "input.txt");
+            public int X { get; set; }
+            public int Y { get; set; }
+        }
 
-            string[] filas = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-            List<Linea> lineas = new();
+        public class Linea
+        {
+            public Punto PuntoInicial { get; set; }
+            public Punto PuntoFinal { get; set; }
+            public List<Punto> Puntos { get; set; }
 
-            foreach (string fila in filas)
+            public Linea(Punto puntoInicial, Punto puntoFinal, List<Punto> puntos)
             {
-                int[] coordenadas = fila.Split(new[] { ",", " -> " }, StringSplitOptions.RemoveEmptyEntries).Select(c => int.Parse(c)).ToArray();
-
-                lineas.Add(new Linea {
-                    PuntoInicial = new Punto { X = coordenadas[0], Y = coordenadas[1] },
-                    PuntoFinal = new Punto { X = coordenadas[2], Y = coordenadas[3] },
-                    Puntos = new List<Punto>()
-                });
+                PuntoInicial = puntoInicial;
+                PuntoFinal = puntoFinal;
+                Puntos = puntos;
             }
-
-            return lineas;
         }
     }
 }
