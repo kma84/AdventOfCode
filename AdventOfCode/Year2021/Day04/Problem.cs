@@ -7,7 +7,7 @@ namespace AdventOfCode.Year2021.Day04
     [Problem(Year = 2021, Day = 4, ProblemName = "Giant Squid")]
     internal class Problem : IProblem
     {
-        private static readonly int TAMAÑO_FILA_COLUMNA = 5;
+        private static readonly int TAMANYO_FILA_COLUMNA = 5;
 
         public bool Debug { get; set; } = false;
 
@@ -33,9 +33,9 @@ namespace AdventOfCode.Year2021.Day04
             {
                 foreach (Casilla[,] board in boards)
                 {
-                    for (int i = 0; i < TAMAÑO_FILA_COLUMNA; i++)
+                    for (int i = 0; i < TAMANYO_FILA_COLUMNA; i++)
                     {
-                        for (int j = 0; j < TAMAÑO_FILA_COLUMNA; j++)
+                        for (int j = 0; j < TAMANYO_FILA_COLUMNA; j++)
                         {
                             if (board[i, j].Numero == numero)
                             {
@@ -63,9 +63,9 @@ namespace AdventOfCode.Year2021.Day04
             {
                 foreach (Board board in boards)
                 {
-                    for (int i = 0; i < TAMAÑO_FILA_COLUMNA; i++)
+                    for (int i = 0; i < TAMANYO_FILA_COLUMNA; i++)
                     {
-                        for (int j = 0; j < TAMAÑO_FILA_COLUMNA; j++)
+                        for (int j = 0; j < TAMANYO_FILA_COLUMNA; j++)
                         {
                             if (board.Casillas != null && board.Casillas[i, j].Numero == numero)
                             {
@@ -94,9 +94,9 @@ namespace AdventOfCode.Year2021.Day04
         {
             int sumaNumsNoMarcados = 0;
 
-            for (int i = 0; i < TAMAÑO_FILA_COLUMNA; i++)
+            for (int i = 0; i < TAMANYO_FILA_COLUMNA; i++)
             {
-                for (int j = 0; j < TAMAÑO_FILA_COLUMNA; j++)
+                for (int j = 0; j < TAMANYO_FILA_COLUMNA; j++)
                 {
                     if (!board[i, j].Marcado)
                     {
@@ -120,7 +120,7 @@ namespace AdventOfCode.Year2021.Day04
 
             List<int> numeros = filas.First().Split(',').Select(n => int.Parse(n)).ToList();
 
-            Casilla[,] board = new Casilla[TAMAÑO_FILA_COLUMNA, TAMAÑO_FILA_COLUMNA];
+            Casilla[,] board = new Casilla[TAMANYO_FILA_COLUMNA, TAMANYO_FILA_COLUMNA];
             int filaBoard = 0;
             List<Casilla[,]> boards = new();
 
@@ -134,10 +134,10 @@ namespace AdventOfCode.Year2021.Day04
                 board[filaBoard, 3] = new Casilla { Numero = numsFila[3], Marcado = false };
                 board[filaBoard, 4] = new Casilla { Numero = numsFila[4], Marcado = false };
 
-                if (++filaBoard == TAMAÑO_FILA_COLUMNA)
+                if (++filaBoard == TAMANYO_FILA_COLUMNA)
                 {
                     boards.Add(board);
-                    board = new Casilla[TAMAÑO_FILA_COLUMNA, TAMAÑO_FILA_COLUMNA];
+                    board = new Casilla[TAMANYO_FILA_COLUMNA, TAMANYO_FILA_COLUMNA];
                     filaBoard = 0;
                 }
             }
