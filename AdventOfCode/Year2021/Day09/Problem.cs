@@ -1,36 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using AdventOfCode.Core;
+using AdventOfCode.Core.Interfaces;
+using AdventOfCode.Utils;
 
-namespace dia9
+namespace AdventOfCode.Year2021.Day09
 {
-    class Program
+    [Problem(Year = 2021, Day = 9, ProblemName = "Smoke Basin")]
+    internal class Problem : IProblem
     {
         private readonly static int MAX_HEIGHT = 9;
+        public bool Debug { get; set; } = false;
 
-
-        static void Main(string[] args)
+        public string Part1(string input)
         {
-            int[,] heightmap = GetMapa();
-            //int[,] heightmap = GetTestMapa();
+            int totalRiesgos = 0;
+            int[,] heightmap = GetMapa(input);
 
             List<(int x, int y)> puntosBajos = GetPuntosBajos(heightmap);
 
-            Puzle1(heightmap, puntosBajos);
-            Puzle2(heightmap, puntosBajos);
+            foreach ((int y, int x) in puntosBajos)
+            {
+                totalRiesgos += heightmap[y, x] + 1;
+            }
+
+            if (Debug)
+                Console.WriteLine($"Puzle1. Suma de los niveles de riesgo: {totalRiesgos}");
+
+            return totalRiesgos.ToString();
         }
 
-
-        private static int[,] GetTestMapa()
+        public string Part2(string input)
         {
-            return new int[,] { 
-                { 2,1,9,9,9,4,3,2,1,0 }, 
-                { 3,9,8,7,8,9,4,9,2,1 }, 
-                { 9,8,5,6,7,8,9,8,9,2 }, 
-                { 8,7,6,7,8,9,6,7,8,9 },
-                { 9,8,9,9,9,6,5,6,7,8 }
-            };
+            List<(int, int)> puntosComprobados = new();
+            List<int> basinSizes = new(); 
+            
+            int[,] heightmap = GetMapa(input);
+            List<(int x, int y)> puntosBajos = GetPuntosBajos(heightmap);
+
+            foreach ((int, int) punto in puntosBajos)
+            {
+                basinSizes.Add(ComprobarPuntosAdyacentes(heightmap, punto, puntosComprobados));
+            }
+
+            int producto = basinSizes.OrderByDescending(b => b).Take(3).Aggregate(0, (total, next) => total == 0 ? next : total * next);
+
+            if (Debug)
+                Console.WriteLine($"Puzle2. producto de las 3 vaguadas m�s grandes: {producto}");
+
+            return producto.ToString();
         }
 
 
@@ -66,35 +82,6 @@ namespace dia9
             }
 
             return puntosBajos;
-        }
-
-
-        private static void Puzle1(int[,] mapa, List<(int, int)> puntosBajos)
-        {
-            int totalRiesgos = 0;
-
-            foreach ((int y, int x) in puntosBajos)
-            {
-                totalRiesgos += mapa[y, x] + 1;
-            }            
-
-            Console.WriteLine($"Puzle1. Suma de los niveles de riesgo: {totalRiesgos}");
-        }
-
-
-        private static void Puzle2(int[,] mapa, List<(int, int)> puntosBajos)
-        {
-            List<(int, int)> puntosComprobados = new();
-            List<int> basinSizes = new();
-
-            foreach ((int, int) punto in puntosBajos)
-            {
-                basinSizes.Add(ComprobarPuntosAdyacentes(mapa, punto, puntosComprobados));
-            }
-
-            int producto = basinSizes.OrderByDescending(b => b).Take(3).Aggregate(0, (total, next) => total == 0 ? next : total * next);
-
-            Console.WriteLine($"Puzle2. producto de las 3 vaguadas más grandes: {producto}");
         }
 
 
@@ -135,12 +122,9 @@ namespace dia9
         }
 
 
-        private static int[,] GetMapa()
-        {
-            string input =
-                File.ReadAllText(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "inputs" + Path.DirectorySeparatorChar + "input.txt");
-            
-            string[] filas = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        private static int[,] GetMapa(string input)
+        {            
+            string[] filas = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
 
             int maxX = filas.First().Length;
             int maxY = filas.Length;
