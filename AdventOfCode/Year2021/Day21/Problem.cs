@@ -8,6 +8,18 @@ namespace AdventOfCode.Year2021.Day21
     internal class Problem : IProblem
     {
         const int BOARD_SPACES = 10;
+        const int MAX_SCORE_PART1 = 1000;
+        const int MAX_SCORE_PART2 = 21;
+
+        private static readonly List<(int rollValue, int numUniverses)> NEW_ROLLS = new() {
+            ( 3, 1 ),
+            ( 4, 3 ),
+            ( 5, 6 ),
+            ( 6, 7 ),
+            ( 7, 6 ),
+            ( 8, 3 ),
+            ( 9, 1 ),
+        };
 
         public bool Debug { get; set; } = false;
 
@@ -23,19 +35,17 @@ namespace AdventOfCode.Year2021.Day21
                 playerScore += playerPosition;
             }
 
-            const int maxScore = 1000;
-
             (int player1Position, int player2Position) = GetStartingPositions(input);
             int player1Score = 0;
             int player2Score = 0;
             int timesRolled = 0;
             int deterministicDice = 0;
 
-            while (player1Score < maxScore && player2Score < maxScore)
+            while (player1Score < MAX_SCORE_PART1 && player2Score < MAX_SCORE_PART1)
             {
                 Roll(ref player1Position, ref player1Score, ref timesRolled, ref deterministicDice);
 
-                if (player1Score < maxScore)
+                if (player1Score < MAX_SCORE_PART1)
                 {
                     Roll(ref player2Position, ref player2Score, ref timesRolled, ref deterministicDice);
                 }
@@ -47,20 +57,8 @@ namespace AdventOfCode.Year2021.Day21
 
         public string Part2(string input)
         {
-            const int maxScore = 21;
             long winnerUniversesP1 = 0;
             long winnerUniversesP2 = 0;
-
-            List<(int rollValue, int numUniverses)> newRolls = new() {
-                    ( 3, 1 ),
-                    ( 4, 3 ),
-                    ( 5, 6 ),
-                    ( 6, 7 ),
-                    ( 7, 6 ),
-                    ( 8, 3 ),
-                    ( 9, 1 ),
-                };
-
 
             (int player1StartingPosition, int player2StartingPosition) = GetStartingPositions(input);
             CommonUniverses startingUniverse = new CommonUniverses(player1StartingPosition, player2StartingPosition);
@@ -68,55 +66,52 @@ namespace AdventOfCode.Year2021.Day21
 
             while (multiverse.Any(d => d.Value > 0))
             {
-                Dictionary<CommonUniverses, long> newMultiverseAfterRoll1 = new();
-                Dictionary<CommonUniverses, long> newMultiverseAfterRoll2 = new();
+                (Dictionary<CommonUniverses, long> newMultiverseAfterRoll1, long winnersP1) = Roll(multiverse, player: 1);
+                winnerUniversesP1 += winnersP1;
 
-                foreach (var rollPlayer1 in newRolls)
-                {
-                    foreach (var kvpUniverses in multiverse)
-                    {
-                        long newUniverses = kvpUniverses.Value * rollPlayer1.numUniverses;
-                        int newPositionP1 = (kvpUniverses.Key.Player1Position + rollPlayer1.rollValue - 1) % BOARD_SPACES + 1;
-                        int newScoreP1 = kvpUniverses.Key.Player1Score + newPositionP1;
-                        CommonUniverses commonUniverses = new CommonUniverses(newPositionP1, kvpUniverses.Key.Player2Position, newScoreP1, kvpUniverses.Key.Player2Score);
-
-                        if (newScoreP1 >= maxScore)
-                        {
-                            winnerUniversesP1 += newUniverses;
-                        }
-                        else
-                        {
-                            newMultiverseAfterRoll1.TryAdd(commonUniverses, 0);
-                            newMultiverseAfterRoll1[commonUniverses] += newUniverses;
-                        }
-                    }
-                }
-
-                foreach (var rollPlayer2 in newRolls)
-                {
-                    foreach (var kvpUniverses in newMultiverseAfterRoll1)
-                    {
-                        long newUniverses = kvpUniverses.Value * rollPlayer2.numUniverses;
-                        int newPositionP2 = (kvpUniverses.Key.Player2Position + rollPlayer2.rollValue - 1) % BOARD_SPACES + 1;
-                        int newScoreP2 = kvpUniverses.Key.Player2Score + newPositionP2;
-                        CommonUniverses commonUniverses = new CommonUniverses(kvpUniverses.Key.Player1Position, newPositionP2, kvpUniverses.Key.Player1Score, newScoreP2);
-
-                        if (newScoreP2 >= maxScore)
-                        {
-                            winnerUniversesP2 += newUniverses;
-                        }
-                        else
-                        {
-                            newMultiverseAfterRoll2.TryAdd(commonUniverses, 0);
-                            newMultiverseAfterRoll2[commonUniverses] += newUniverses;
-                        }
-                    }
-                }
+                (Dictionary<CommonUniverses, long> newMultiverseAfterRoll2, long winnersP2) = Roll(newMultiverseAfterRoll1, player: 2);
+                winnerUniversesP2 += winnersP2;
 
                 multiverse = newMultiverseAfterRoll2;
             }
 
             return Math.Max(winnerUniversesP1, winnerUniversesP2).ToString();
+        }
+
+        private static (Dictionary<CommonUniverses, long> newMultiverse, long winnerUniverses) Roll(Dictionary<CommonUniverses, long> multiverse, int player)
+        {
+            long winnerUniverses = 0;
+            Dictionary<CommonUniverses, long> newMultiverse = new();
+
+            foreach (var roll in NEW_ROLLS)
+            {
+                foreach (var kvpUniverses in multiverse)
+                {
+                    long newUniverses = kvpUniverses.Value * roll.numUniverses;
+                    int playerPosition = player == 1 ? kvpUniverses.Key.Player1Position : kvpUniverses.Key.Player2Position;
+                    int newPosition = (playerPosition + roll.rollValue - 1) % BOARD_SPACES + 1;
+                    int playerScore = player == 1 ? kvpUniverses.Key.Player1Score : kvpUniverses.Key.Player2Score;
+                    int newScore = playerScore + newPosition;
+
+                    CommonUniverses commonUniverses;
+                    if (player == 1)
+                        commonUniverses = new CommonUniverses(newPosition, kvpUniverses.Key.Player2Position, newScore, kvpUniverses.Key.Player2Score);
+                    else
+                        commonUniverses = new CommonUniverses(kvpUniverses.Key.Player1Position, newPosition, kvpUniverses.Key.Player1Score, newScore);
+
+                    if (newScore >= MAX_SCORE_PART2)
+                    {
+                        winnerUniverses += newUniverses;
+                    }
+                    else
+                    {
+                        newMultiverse.TryAdd(commonUniverses, 0);
+                        newMultiverse[commonUniverses] += newUniverses;
+                    }
+                }
+            }
+
+            return (newMultiverse, winnerUniverses);
         }
 
         private static (int player1StartingPosition, int player2StartingPosition) GetStartingPositions(string input)
