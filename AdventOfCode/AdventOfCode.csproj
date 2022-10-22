@@ -12,6 +12,9 @@
     <None Remove="Year2021\Day01\solutions.txt" />
     <None Remove="Year2021\Day02\input.txt" />
     <None Remove="Year2021\Day02\solutions.txt" />
+    <None Remove="Year2021\Day13\debugInput.txt" />
+    <None Remove="Year2021\Day13\input.txt" />
+    <None Remove="Year2021\Day13\solutions.txt" />
     <None Remove="Year2021\Day20\input.txt" />
     <None Remove="Year2021\Day20\debugInput.txt" />
     <None Remove="Year2021\Day20\solutions.txt" />
@@ -56,6 +59,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2021\Day02\solutions.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day13\debugInput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day13\input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2021\Day13\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2021\Day20\input.txt">
