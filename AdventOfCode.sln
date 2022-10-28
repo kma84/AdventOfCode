@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia18", "dia18\dia18.csproj", "{C6347CF4-989D-4A43-9185-887117B9BEBF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dia19", "dia19\dia19.csproj", "{D22D153C-92E8-4C09-BB4F-7A2B90AF2AF3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode", "AdventOfCode\AdventOfCode.csproj", "{470001F7-351D-4C59-8E7F-0D3A8608EE81}"
@@ -21,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C6347CF4-989D-4A43-9185-887117B9BEBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C6347CF4-989D-4A43-9185-887117B9BEBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C6347CF4-989D-4A43-9185-887117B9BEBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C6347CF4-989D-4A43-9185-887117B9BEBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D22D153C-92E8-4C09-BB4F-7A2B90AF2AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D22D153C-92E8-4C09-BB4F-7A2B90AF2AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D22D153C-92E8-4C09-BB4F-7A2B90AF2AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU

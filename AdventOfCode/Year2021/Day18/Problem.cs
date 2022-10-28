@@ -1,24 +1,34 @@
-﻿
+using AdventOfCode.Core;
+using AdventOfCode.Core.Interfaces;
+using AdventOfCode.Utils;
 
-namespace dia18
+namespace AdventOfCode.Year2021.Day18
 {
-    internal static class ImprovedVersion
+    [Problem(Year = 2021, Day = 18, ProblemName = "Snailfish")]
+    internal class Problem : IProblem
     {
-        internal static void Part1(string inputFilename)
+        public bool Debug { get; set; } = false;
+
+        public string Part1(string input)
         {
-            var numbers = GetInput(inputFilename);
+            var numbers = GetInput(input);
 
             (SnailfishNumber result, _) = numbers.Aggregate((result, number) => Add(result, number));
+            int magnitude = result.GetMagnitude();
 
-            Console.WriteLine();
-            Console.WriteLine("Sum:");
-            Console.WriteLine(result);
-            Console.WriteLine("Part1. Magnitude: " + result.GetMagnitude());
+            if (Debug)
+            {
+                Console.WriteLine("Sum:");
+                Console.WriteLine(result);
+                Console.WriteLine("Magnitude: " + result.GetMagnitude());
+            }
+
+            return magnitude.ToString();
         }
 
-        internal static void Part2(string inputFilename)
+        public string Part2(string input)
         {
-            List<string> numbersStr = GetInputAsStr(inputFilename);
+            List<string> numbersStr = GetInputAsStr(input);
 
             int maxMagnitude = 0;
 
@@ -34,19 +44,19 @@ namespace dia18
                 }
             }
 
-            Console.WriteLine("Part2. Max. magnitude: " + maxMagnitude);
+            return maxMagnitude.ToString();
         }
 
 
         private static (SnailfishNumber, List<RegularNumber>) Add(
-            (SnailfishNumber number, List<RegularNumber> regularNumbers) left, 
+            (SnailfishNumber number, List<RegularNumber> regularNumbers) left,
             (SnailfishNumber number, List<RegularNumber> regularNumbers) right)
         {
             PairNumber result = new() { Left = left.number, Right = right.number };
             List<RegularNumber> newRegNumbers = new(left.regularNumbers);
             newRegNumbers.AddRange(right.regularNumbers);
 
-            while (Explode(newRegNumbers) || Split(newRegNumbers)) {}
+            while (Explode(newRegNumbers) || Split(newRegNumbers)) { }
 
             return (result, newRegNumbers);
         }
@@ -117,21 +127,10 @@ namespace dia18
         }
 
 
-        private static List<(SnailfishNumber, List<RegularNumber>)> GetInput(string filename)
-        {
-            return GetInputAsStr(filename).Select(r => ParseNumber(r)).ToList();
-        }
+        private static List<(SnailfishNumber, List<RegularNumber>)> GetInput(string input) => GetInputAsStr(input).Select(ParseNumber).ToList();
 
-
-        private static List<string> GetInputAsStr(string filename)
-        {
-            string path = Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar + "inputs" + Path.DirectorySeparatorChar + filename;
-            string input = File.ReadAllText(path);
-
-            string[] rows = input.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-
-            return rows.ToList();
-        }
+        private static List<string> GetInputAsStr(string input) => input.GetLines(StringSplitOptions.RemoveEmptyEntries).ToList();
+        
 
         private static (SnailfishNumber, List<RegularNumber>) ParseNumber(string numberStr)
         {
@@ -177,6 +176,90 @@ namespace dia18
                 currentNumber = (PairNumber)currentNumber.Parent;
 
             return (currentNumber ?? (SnailfishNumber)new RegularNumber(-1), regularNumbers);
+        }
+
+
+        private abstract class SnailfishNumber
+        {
+            public SnailfishNumber? Parent { get; set; }
+
+            public bool IsLeftNumber { get; set; } = false;
+            public bool IsRightNumber { get; set; } = false;
+
+            public int GetDepth()
+            {
+                if (Parent != null)
+                    return Parent.GetDepth() + 1;
+
+                return 0;
+            }
+
+            public abstract int GetMagnitude();
+        }
+
+        private class RegularNumber : SnailfishNumber
+        {
+            public int Value { get; set; }
+
+            public RegularNumber(int value)
+            {
+                Value = value;
+            }
+
+            public override string ToString()
+            {
+                return Value.ToString();
+            }
+
+            public override int GetMagnitude()
+            {
+                return Value;
+            }
+        }
+
+        private class PairNumber : SnailfishNumber
+        {
+            private SnailfishNumber? left;
+            public SnailfishNumber? Left
+            {
+                get { return left; }
+                set
+                {
+                    left = value;
+
+                    if (left != null)
+                    {
+                        left.Parent = this;
+                        left.IsLeftNumber = true;
+                    }
+                }
+            }
+
+            private SnailfishNumber? right;
+            public SnailfishNumber? Right
+            {
+                get { return right; }
+                set
+                {
+                    right = value;
+
+                    if (right != null)
+                    {
+                        right.Parent = this;
+                        right.IsRightNumber = true;
+                    }
+                }
+            }
+
+            public override string ToString()
+            {
+                return $"[{Left?.ToString()},{Right?.ToString()}]";
+            }
+
+            public override int GetMagnitude()
+            {
+                return 3 * (Left?.GetMagnitude() ?? 0) + 2 * (Right?.GetMagnitude() ?? 0);
+            }
         }
     }
 }
