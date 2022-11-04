@@ -21,7 +21,7 @@ namespace AdventOfCode.Year2021.Day23
             int? bestResult = null;
 
             var initialState = GetInitialState(input);
-            Dictionary<List<Amphimod?>, int> cache = new(new ListComparer()) { { initialState, 0 } };
+            Dictionary<string, int> cache = new() { { initialState, 0 } };
             burrow.MoveAmphimods(initialState, ref bestResult, cache);
 
             if (Debug)
@@ -36,26 +36,27 @@ namespace AdventOfCode.Year2021.Day23
         }
 
 
-        private static List<Amphimod?> GetInitialState(string input)
+        private static string GetInitialState(string input)
         {
             string[] lines = input.GetLines();
 
-            List<Amphimod?> initialState = Enumerable.Repeat(default(Amphimod?), HALLWAY_LENGTH).ToList();
-            initialState.Add(GetAmphimodFromChar(lines[2][3]));
-            initialState.Add(GetAmphimodFromChar(lines[3][3]));
-            initialState.Add(GetAmphimodFromChar(lines[2][5]));
-            initialState.Add(GetAmphimodFromChar(lines[3][5]));
-            initialState.Add(GetAmphimodFromChar(lines[2][7]));
-            initialState.Add(GetAmphimodFromChar(lines[3][7]));
-            initialState.Add(GetAmphimodFromChar(lines[2][9]));
-            initialState.Add(GetAmphimodFromChar(lines[3][9]));
+            List<char> initialState = Enumerable.Repeat(EMPTY_NODE_CHAR, HALLWAY_LENGTH).ToList();
+            initialState.Add(lines[2][3]);
+            initialState.Add(lines[3][3]);
+            initialState.Add(lines[2][5]);
+            initialState.Add(lines[3][5]);
+            initialState.Add(lines[2][7]);
+            initialState.Add(lines[3][7]);
+            initialState.Add(lines[2][9]);
+            initialState.Add(lines[3][9]);
 
-            return initialState;
+            return new string(initialState.ToArray());
         }
 
 
-        private static List<Amphimod?> GetStateFromString(string stateStr) => stateStr.Select(GetAmphimodFromChar).ToList();
-        private static string GetStringFromState(List<Amphimod?> state) => string.Join(string.Empty, state.Select(a => a?.ToString()?[..1] ?? EMPTY_NODE_CHAR.ToString()));
+        private static List<Amphimod?> GetLstAmphimodsFromStateString(string stateStr) => stateStr.Select(GetAmphimodFromChar).ToList();
+        private static string GetStateStringFromLstAmphimods(List<Amphimod?> state) 
+            => string.Join(string.Empty, state.Select(a => a?.ToString()?[..1] ?? EMPTY_NODE_CHAR.ToString()));
 
 
         private static Amphimod? GetAmphimodFromChar(char amphimodChar) => amphimodChar switch
@@ -79,7 +80,7 @@ namespace AdventOfCode.Year2021.Day23
             public List<Node> Nodes { get; set; } = new();
 
             public Burrow()
-            {
+            { 
                 for (int i = 0; i < HALLWAY_LENGTH; i++)
                     Hallway.Add(new HallwayNode(i));
 
@@ -124,7 +125,7 @@ namespace AdventOfCode.Year2021.Day23
             }
 
 
-            public void MoveAmphimods(List<Amphimod?> currentState, ref int? bestResult, Dictionary<List<Amphimod?>, int> cache) 
+            public void MoveAmphimods(string currentState, ref int? bestResult, Dictionary<string, int> cache) 
             {
                 ///////////
                 //if (GetStringFromState(currentState) == ".........A..ABBCCDD")
@@ -166,7 +167,7 @@ namespace AdventOfCode.Year2021.Day23
                     if (movementEnergy > 0)
                     {
                         int totalEnergy = cache[currentState] + movementEnergy;
-                        List<Amphimod?> newState = GetState();
+                        string newState = GetState();
 
                         if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
                         {
@@ -189,7 +190,7 @@ namespace AdventOfCode.Year2021.Day23
                         movementEnergy = MoveAmphimod(hallwayNode, roomNode, (int)(roomNode.Amphimod ?? 0));
 
                         int totalEnergy = cache[currentState] + movementEnergy;
-                        List<Amphimod?> newState = GetState();
+                        string newState = GetState();
 
                         if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
                         {
@@ -206,7 +207,7 @@ namespace AdventOfCode.Year2021.Day23
             }
 
 
-            private static bool PathEnergyGtePreviousResults(int totalEnergy, int? bestResult, List<Amphimod?> newState, Dictionary<List<Amphimod?>, int> cache)
+            private static bool PathEnergyGtePreviousResults(int totalEnergy, int? bestResult, string newState, Dictionary<string, int> cache)
             {
                 return (bestResult != null && totalEnergy >= bestResult.Value) 
                     || cache.TryGetValue(newState, out int cachedEnergy) && cachedEnergy <= totalEnergy;
@@ -238,13 +239,15 @@ namespace AdventOfCode.Year2021.Day23
                 _ => throw new ArgumentOutOfRangeException(nameof(amphimod), $"Not expected Amphimod value: {amphimod}")
             };
 
-            public void RestoreState(List<Amphimod?> state)
+            public void RestoreState(string state)
             {
+                List<Amphimod?> amphimods = GetLstAmphimodsFromStateString(state);
+
                 for (int i = 0; i < Nodes.Count; i++)
-                    Nodes[i].Amphimod = state[i];
+                    Nodes[i].Amphimod = amphimods[i];
             }
 
-            public List<Amphimod?> GetState() => Nodes.Select(n => n.Amphimod).ToList();
+            public string GetState() => GetStateStringFromLstAmphimods(Nodes.Select(n => n.Amphimod).ToList());
 
             public static int GetDistance(HallwayNode hallwayNode, RoomNode roomNode)
             {
@@ -322,15 +325,6 @@ namespace AdventOfCode.Year2021.Day23
             public HallwayNode(int number) : base(number)
             {
             }
-        }
-
-        class ListComparer : EqualityComparer<List<Amphimod?>>
-        {
-            public override bool Equals(List<Amphimod?>? x, List<Amphimod?>? y)
-              => StructuralComparisons.StructuralEqualityComparer.Equals(x?.ToArray(), y?.ToArray());
-
-            public override int GetHashCode(List<Amphimod?> x)
-              => StructuralComparisons.StructuralEqualityComparer.GetHashCode(x.ToArray());
         }
 
         private enum Amphimod
