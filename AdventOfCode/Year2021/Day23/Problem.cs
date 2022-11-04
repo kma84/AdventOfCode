@@ -124,7 +124,7 @@ namespace AdventOfCode.Year2021.Day23
             }
 
 
-            public void MoveAmphimods(List<Amphimod?> currentState, ref int? bestResult, Dictionary<List<Amphimod?>, int> cache) // TODO cache
+            public void MoveAmphimods(List<Amphimod?> currentState, ref int? bestResult, Dictionary<List<Amphimod?>, int> cache) 
             {
                 ///////////
                 //if (GetStringFromState(currentState) == ".........A..ABBCCDD")
@@ -168,7 +168,7 @@ namespace AdventOfCode.Year2021.Day23
                         int totalEnergy = cache[currentState] + movementEnergy;
                         List<Amphimod?> newState = GetState();
 
-                        if (cache.TryGetValue(newState, out int cachedEnergy) && cachedEnergy <= totalEnergy)
+                        if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
                         {
                             RestoreState(currentState);
                             continue;
@@ -184,8 +184,6 @@ namespace AdventOfCode.Year2021.Day23
                 // Movimiento de los nodos de los rooms
                 foreach (RoomNode roomNode in Rooms.Where(r => r.AmphimodCanMove()))
                 {
-                    // TODO para cada espacio libre del hallway, mover amphimod 
-
                     foreach (HallwayNode hallwayNode in Hallway.Where(h => h.IsEmpty() && !h.IsInFrontOfRoom && AmphimodCanReachTarget(h, roomNode)))
                     {
                         movementEnergy = MoveAmphimod(hallwayNode, roomNode, (int)(roomNode.Amphimod ?? 0));
@@ -193,7 +191,7 @@ namespace AdventOfCode.Year2021.Day23
                         int totalEnergy = cache[currentState] + movementEnergy;
                         List<Amphimod?> newState = GetState();
 
-                        if (cache.TryGetValue(newState, out int cachedEnergy) && cachedEnergy <= totalEnergy)
+                        if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
                         {
                             RestoreState(currentState);
                             continue;
@@ -208,6 +206,13 @@ namespace AdventOfCode.Year2021.Day23
             }
 
 
+            private static bool PathEnergyGtePreviousResults(int totalEnergy, int? bestResult, List<Amphimod?> newState, Dictionary<List<Amphimod?>, int> cache)
+            {
+                return (bestResult != null && totalEnergy >= bestResult.Value) 
+                    || cache.TryGetValue(newState, out int cachedEnergy) && cachedEnergy <= totalEnergy;
+            }
+
+
             private bool AmphimodCanReachTarget(HallwayNode hallwayNode, RoomNode roomNode)
             {
                 if (roomNode.TopNode?.Amphimod != null)
@@ -216,19 +221,9 @@ namespace AdventOfCode.Year2021.Day23
                 HallwayNode? hallwayNodeInFrontOfRoom = (HallwayNode?)(roomNode.Number == 0 ? roomNode.TopNode : roomNode.TopNode?.TopNode);
 
                 int currentNumber = hallwayNodeInFrontOfRoom?.Number ?? 0;
-                //while (currentNumber != hallwayNode.Number)
-                //{
-                //    if (true)
-                //    {
-
-                //    }
-                //}
 
                 return Hallway.Where(h => h.Number > Math.Min(currentNumber, hallwayNode.Number) && h.Number < Math.Max(currentNumber, hallwayNode.Number))
                             .All(n => n.IsEmpty());
-                //return Hallway.Skip(Math.Min(hallwayNode.Number, hallwayNodeInFrontOfRoom?.Number ?? 0))
-                //        .Take(Math.Abs(hallwayNode.Number - hallwayNodeInFrontOfRoom?.Number ?? 0))
-                //        .All(n => n.IsEmpty());
             }
 
 
