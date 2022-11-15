@@ -126,19 +126,29 @@ namespace AdventOfCode.Year2021.Day23
                     Hallway[i].RightNode = Hallway.ElementAtOrDefault(i + 1);
                 }
 
-                LinkRoomNodes(Room1, Hallway[2]);
-                LinkRoomNodes(Room2, Hallway[4]);
-                LinkRoomNodes(Room3, Hallway[6]);
-                LinkRoomNodes(Room4, Hallway[8]);
+                LinkRoomNodes(Room1, Hallway[2], roomCapacity);
+                LinkRoomNodes(Room2, Hallway[4], roomCapacity);
+                LinkRoomNodes(Room3, Hallway[6], roomCapacity);
+                LinkRoomNodes(Room4, Hallway[8], roomCapacity);
 
-                static void LinkRoomNodes(List<RoomNode> room, HallwayNode hallwayNodeInFrontOfRoom)
+                static void LinkRoomNodes(List<RoomNode> room, HallwayNode hallwayNodeInFrontOfRoom, int roomCapacity)
                 {
                     hallwayNodeInFrontOfRoom.IsInFrontOfRoom = true;
 
                     hallwayNodeInFrontOfRoom.BottomNode = room[0];
                     room[0].TopNode = hallwayNodeInFrontOfRoom;
-                    room[0].BottomNode = room[1];
-                    room[1].TopNode = room[0];
+
+                    for (int i = 0; i < roomCapacity; i++)
+                    {
+                        RoomNode? topRoomNode = room.ElementAtOrDefault(i - 1);
+                        RoomNode? bottomRoomNode = room.ElementAtOrDefault(i + 1);
+
+                        if (topRoomNode != null)
+                            room[i].TopNode = topRoomNode;
+
+                        if (bottomRoomNode != null)
+                            room[i].BottomNode = bottomRoomNode;
+                    }
                 }
             }
 
