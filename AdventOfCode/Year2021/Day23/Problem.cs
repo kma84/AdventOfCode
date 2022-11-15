@@ -11,7 +11,7 @@ namespace AdventOfCode.Year2021.Day23
         private const int HALLWAY_LENGTH = 11;
         private const char EMPTY_NODE_CHAR = '.';
 
-        public bool Debug { get; set; } = true;
+        public bool Debug { get; set; } = false;
 
 
         public string Part1(string input)

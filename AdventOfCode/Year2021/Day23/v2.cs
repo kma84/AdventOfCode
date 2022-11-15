@@ -1,10 +1,5 @@
 ﻿using AdventOfCode.Utils;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode.Year2021.Day23
 {
@@ -155,51 +150,14 @@ namespace AdventOfCode.Year2021.Day23
                 {
                     RestoreState(currentState);
 
-                    int movementEnergy;
-                    bool pathFinished = false;
+                    int movementEnergy = 0;
+                    bool pathFinished;
 
-                    // Movimiento de los nodos del Hallway
-                    foreach (HallwayNode hallwayNode in Hallway.Where(h => !h.IsEmpty()))
+                    do
                     {
-                        var refRoom = GetReferenceRoom(hallwayNode.Amphimod ?? default);
-                        movementEnergy = 0;
-
-                        for (int i = refRoom.Count - 1; i >= 0; i--)
-                        {
-                            if ((refRoom.ElementAtOrDefault(i + 1)?.IsConsolidated() ?? true) && refRoom[i].IsEmpty() && AmphimodCanReachTarget(hallwayNode, refRoom[i]))
-                            {
-                                movementEnergy = MoveAmphimod(hallwayNode, refRoom[i], (int)(hallwayNode.Amphimod ?? 0));
-                                break;
-                            }
-                        }
-
-                        // No hay más casos, si ho ha entrado en algunos de los casos anteriores, el amphimod no se puede mover
-
-                        if (movementEnergy > 0)
-                        {
-                            int totalEnergy = cache[currentState] + movementEnergy;
-                            string newState = GetState();
-
-                            if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
-                            {
-                                pathFinished = true;
-                                break;
-                            }
-
-                            cache[newState] = totalEnergy;
-                            currentState = newState;
-
-                            if (IsFinalPosition())
-                            {
-                                if (!bestResult.HasValue || totalEnergy < bestResult)
-                                    bestResult = totalEnergy;
-
-                                pathFinished = true;
-                                break;
-                            }
-
-                        }
-                    }
+                        MoveHallwayNodes(ref bestResult, cache, ref currentState, out movementEnergy, out pathFinished);
+                    } while (movementEnergy > 0);
+                    
 
                     if (!pathFinished)
                     {
@@ -223,12 +181,61 @@ namespace AdventOfCode.Year2021.Day23
                             }
                         }
                     }
-                    
+
                 }
 
                 return bestResult ?? 0;
             }
 
+            private void MoveHallwayNodes(ref int? bestResult, Dictionary<string, int> cache, ref string currentState, out int movementEnergy, out bool pathFinished)
+            {
+                pathFinished = false;
+                movementEnergy = 0;
+
+                // Movimiento de los nodos del Hallway
+                foreach (HallwayNode hallwayNode in Hallway.Where(h => !h.IsEmpty()))
+                {
+                    var refRoom = GetReferenceRoom(hallwayNode.Amphimod ?? default);
+                    movementEnergy = 0;
+
+                    for (int i = refRoom.Count - 1; i >= 0; i--)
+                    {
+                        if ((refRoom.ElementAtOrDefault(i + 1)?.IsConsolidated() ?? true) && refRoom[i].IsEmpty() && AmphimodCanReachTarget(hallwayNode, refRoom[i]))
+                        {
+                            movementEnergy = MoveAmphimod(hallwayNode, refRoom[i], (int)(hallwayNode.Amphimod ?? 0));
+                            break;
+                        }
+                    }
+
+                    // No hay más casos, si ho ha entrado en algunos de los casos anteriores, el amphimod no se puede mover
+
+                    if (movementEnergy > 0)
+                    {
+                        int totalEnergy = cache[currentState] + movementEnergy;
+                        string newState = GetState();
+
+                        if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
+                        {
+                            movementEnergy = 0;
+                            pathFinished = true;
+                            break;
+                        }
+
+                        cache[newState] = totalEnergy;
+                        currentState = newState;
+
+                        if (IsFinalPosition())
+                        {
+                            if (!bestResult.HasValue || totalEnergy < bestResult)
+                                bestResult = totalEnergy;
+
+                            pathFinished = true;
+                            break;
+                        }
+
+                    }
+                }
+            }
 
             private static List<Amphimod?> GetLstAmphimodsFromStateString(string stateStr) => stateStr.Select(GetAmphimodFromChar).ToList();
 
