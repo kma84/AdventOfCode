@@ -16,40 +16,67 @@ namespace AdventOfCode.Year2021.Day23
 
         public string Part1(string input)
         {
-            V2 v2 = new V2();
-            return v2.Part1(input);
+            string initialState = GetInitialState(input);
 
-            //Burrow burrow = new(roomCapacity: 2);
-            //int? bestResult = null;
+            int bestResult = GetBestResult(initialState, 2);
 
-            //string initialState = GetInitialState(input);
-            //Dictionary<string, int> cache = new() { { initialState, 0 } };
-            //burrow.MoveAmphimods(initialState, ref bestResult, cache);
-
-            //if (Debug)
-            //    Console.WriteLine(burrow);
-
-            //return bestResult?.ToString() ?? String.Empty;
+            return bestResult.ToString();
         }
 
         public string Part2(string input)
         {
-            V2 v2 = new V2();
-            return v2.Part2(input);
+            string initialState = GetInitialState(input, part2Extension: true);
 
-            //Burrow burrow = new(roomCapacity: 4);
-            //int? bestResult = null;
+            int bestResult = GetBestResult(initialState, 4);
 
-            //string initialState = GetInitialState(input, part2Extension: true);
-            //Dictionary<string, int> cache = new() { { initialState, 0 } };
-            //burrow.MoveAmphimods(initialState, ref bestResult, cache);
-
-            //if (Debug)
-            //    Console.WriteLine(burrow);
-
-            //return bestResult?.ToString() ?? String.Empty;
+            return bestResult.ToString();
         }
 
+
+        private static int GetBestResult(string initialState, int roomCapacity)
+        {
+            Burrow burrow = new(roomCapacity);
+            string finalState = GetFinalState(roomCapacity);
+
+            Dictionary<string, int> dist = new() { { initialState, 0 } };
+            Dictionary<string, string?> prev = new() { { initialState, default } };
+            PriorityQueue<string, int> priorityQueue = new();
+
+            priorityQueue.Enqueue(initialState, dist[initialState]);
+
+            while (priorityQueue.Count > 0)
+            {
+                string currentState = priorityQueue.Dequeue();
+
+                if (currentState == finalState)
+                    return dist[currentState];
+
+                foreach ((string nextState, int nextStateDist) in burrow.GetNextStates(currentState))
+                {
+                    int tryDist = dist[currentState] + nextStateDist;
+
+                    if (!dist.ContainsKey(nextState) || tryDist < dist[nextState])
+                    {
+                        dist[nextState] = tryDist;
+                        prev[nextState] = currentState;
+                        priorityQueue.Enqueue(nextState, dist[nextState]);
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        private static string GetFinalState(int roomCapacity)
+        {
+            List<char> finalState = Enumerable.Repeat(EMPTY_NODE_CHAR, HALLWAY_LENGTH).ToList();
+            finalState.AddRange(Enumerable.Repeat(Amphimod.Amber.ToString()[0], roomCapacity));
+            finalState.AddRange(Enumerable.Repeat(Amphimod.Bronze.ToString()[0], roomCapacity));
+            finalState.AddRange(Enumerable.Repeat(Amphimod.Copper.ToString()[0], roomCapacity));
+            finalState.AddRange(Enumerable.Repeat(Amphimod.Desert.ToString()[0], roomCapacity));
+
+            return new string(finalState.ToArray());
+        }
 
         private static string GetInitialState(string input, bool part2Extension = false)
         {
@@ -102,7 +129,7 @@ namespace AdventOfCode.Year2021.Day23
             public List<Node> Nodes { get; set; } = new();
 
             public Burrow(int roomCapacity)
-            { 
+            {
                 for (int i = 0; i < HALLWAY_LENGTH; i++)
                     Hallway.Add(new HallwayNode(i));
 
@@ -152,82 +179,109 @@ namespace AdventOfCode.Year2021.Day23
                 }
             }
 
-            private void CreateRoomNodes(List<RoomNode> room, int roomNumber, int roomCapacity, Amphimod referenceAmphimod)
+
+            internal List<(string nextState, int dist)> GetNextStates(string currentState)
             {
-                for (int i = 0; i < roomCapacity; i++)
-                    room.Add(new RoomNode(roomNumber, i, referenceAmphimod));
+                RestoreState(currentState);
+
+                int movementsEnergy;
+                int totalEnergy = 0;
+
+                do
+                {
+                    movementsEnergy = MoveHallwayAmphimodsToRefRooms();
+                    totalEnergy += movementsEnergy;
+                } while (movementsEnergy != 0);
+
+                do
+                {
+                    movementsEnergy = MoveRoomAmphimodsToRefRooms();
+                    totalEnergy += movementsEnergy;
+                } while (movementsEnergy != 0);
+
+                if (totalEnergy > 0)
+                    return new() { (GetState(), totalEnergy) };
+
+                return GetStatesFromRoomsToHallwayMovements();
             }
 
 
-            public void MoveAmphimods(string currentState, ref int? bestResult, Dictionary<string, int> cache) 
-            {                
-                RestoreState(currentState);
+            private List<(string nextState, int dist)> GetStatesFromRoomsToHallwayMovements()
+            {
+                List<(string nextState, int dist)> newStates = new();
+                string sourceState = GetState();
 
-                int movementEnergy;
-
-                // Movimiento de los nodos del Hallway
-                foreach (HallwayNode hallwayNode in Hallway.Where(h => !h.IsEmpty()))
-                {
-                    var refRoom = GetReferenceRoom(hallwayNode.Amphimod ?? default);
-                    movementEnergy = 0;
-
-                    for (int i = refRoom.Count - 1; i >= 0; i--)
-                    {
-                        if ((refRoom.ElementAtOrDefault(i + 1)?.IsConsolidated() ?? true) && refRoom[i].IsEmpty() && AmphimodCanReachTarget(hallwayNode, refRoom[i]))
-                        {
-                            movementEnergy = MoveAmphimod(hallwayNode, refRoom[i], (int)(hallwayNode.Amphimod ?? 0));
-                            break;
-                        }
-                    }
-
-                    // No hay más casos, si ho ha entrado en algunos de los casos anteriores, el amphimod no se puede mover
-
-                    if (movementEnergy > 0)
-                    {
-                        int totalEnergy = cache[currentState] + movementEnergy;
-                        string newState = GetState();
-
-                        if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
-                        {
-                            return;
-                        }
-
-                        cache[newState] = totalEnergy;
-                        currentState = newState;
-
-                        if (IsFinalPosition())
-                        {
-                            if (!bestResult.HasValue || totalEnergy < bestResult)
-                                bestResult = totalEnergy;
-
-                            return;
-                        }
-
-                    }
-                }
-
-                // Movimiento de los nodos de los rooms
                 foreach (RoomNode roomNode in Rooms.Where(r => r.AmphimodCanMove()))
                 {
-                    foreach (HallwayNode hallwayNode in Hallway.Where(h => h.IsEmpty() && !h.IsInFrontOfRoom && AmphimodCanReachTarget(h, roomNode)))
+                    var hallwayFreeNodes = Hallway.Where(h => h.IsEmpty() && !h.IsInFrontOfRoom && AmphimodCanReachTarget(h, roomNode));
+
+                    foreach (HallwayNode hallwayNode in hallwayFreeNodes)
                     {
-                        movementEnergy = MoveAmphimod(hallwayNode, roomNode, (int)(roomNode.Amphimod ?? 0));
+                        int movementEnergy = MoveAmphimod(hallwayNode, roomNode, (int)(roomNode.Amphimod ?? 0));
+                        newStates.Add((GetState(), movementEnergy));
 
-                        int totalEnergy = cache[currentState] + movementEnergy;
-                        string newState = GetState();
-
-                        if (PathEnergyGtePreviousResults(totalEnergy, bestResult, newState, cache))
-                        {
-                            RestoreState(currentState);
-                            continue;
-                        }
-
-                        cache[newState] = totalEnergy;
-                        MoveAmphimods(newState, ref bestResult, cache);
-
-                        RestoreState(currentState);
+                        RestoreState(sourceState);
                     }
                 }
+
+                return newStates;
+            }
+
+            private int MoveHallwayAmphimodsToRefRooms()
+            {
+                int movementsEnergy = 0;
+                var hallwayNodesToCheck = Hallway.Where(h => !h.IsEmpty());
+
+                foreach (HallwayNode hallwayNode in hallwayNodesToCheck)
+                {
+                    var refRoom = GetReferenceRoom(hallwayNode.Amphimod ?? default);
+
+                    if (SearchFreeSpaceInRefRoom(refRoom, out RoomNode? roomNode) && AmphimodCanReachTarget(hallwayNode, roomNode))
+                    {
+                        movementsEnergy += MoveAmphimod(hallwayNode, roomNode, (int)(hallwayNode.Amphimod ?? 0));
+                    }
+                }
+
+                return movementsEnergy;
+            }
+
+            private int MoveRoomAmphimodsToRefRooms()
+            {
+                int movementsEnergy = 0;
+
+                foreach (RoomNode roomNode in Rooms.Where(r => r.AmphimodCanMove()))
+                {
+                    var refRoom = GetReferenceRoom(roomNode.Amphimod ?? default);
+
+                    if (SearchFreeSpaceInRefRoom(refRoom, out RoomNode? refRoomNode) && AmphimodCanReachTarget(roomNode, refRoomNode))
+                    {
+                        movementsEnergy += MoveAmphimod(roomNode, refRoomNode, (int)(roomNode.Amphimod ?? 0));
+                    }
+                }
+
+                return movementsEnergy;
+            }
+
+            private static bool SearchFreeSpaceInRefRoom(List<RoomNode> refRoom, out RoomNode? roomNode)
+            {
+                roomNode = null;
+
+                for (int i = refRoom.Count - 1; i >= 0; i--)
+                {
+                    if ((refRoom.ElementAtOrDefault(i + 1)?.IsConsolidated() ?? true) && refRoom[i].IsEmpty())
+                    {
+                        roomNode = refRoom[i];
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            private static void CreateRoomNodes(List<RoomNode> room, int roomNumber, int roomCapacity, Amphimod referenceAmphimod)
+            {
+                for (int i = 0; i < roomCapacity; i++)
+                    room.Add(new RoomNode(roomNumber, i, referenceAmphimod));
             }
 
             private static List<Amphimod?> GetLstAmphimodsFromStateString(string stateStr) => stateStr.Select(GetAmphimodFromChar).ToList();
@@ -244,15 +298,9 @@ namespace AdventOfCode.Year2021.Day23
                 _ => null,
             };
 
-            private static bool PathEnergyGtePreviousResults(int totalEnergy, int? bestResult, string newState, Dictionary<string, int> cache)
+            private bool AmphimodCanReachTarget(HallwayNode hallwayNode, RoomNode? roomNode)
             {
-                return (bestResult != null && totalEnergy >= bestResult.Value) 
-                    || cache.TryGetValue(newState, out int cachedEnergy) && cachedEnergy <= totalEnergy;
-            }
-
-            private bool AmphimodCanReachTarget(HallwayNode hallwayNode, RoomNode roomNode)
-            {
-                if (roomNode.TopNode?.Amphimod != null)
+                if (roomNode == null || roomNode.TopNode?.Amphimod != null)
                     return false;
 
                 HallwayNode? hallwayNodeInFrontOfRoom = Hallway[roomNode.Room * 2];
@@ -263,11 +311,25 @@ namespace AdventOfCode.Year2021.Day23
                             .All(n => n.IsEmpty());
             }
 
-            private bool IsFinalPosition() => Rooms.All(n => n.IsConsolidated());
+            private bool AmphimodCanReachTarget(RoomNode source, RoomNode? target)
+            {
+                if (target == null || target.TopNode?.Amphimod != null)
+                    return false;
+
+                HallwayNode? hallwayNodeInFrontOfSource = Hallway[source.Room * 2];
+                HallwayNode? hallwayNodeInFrontOfTarget = Hallway[target.Room * 2];
+
+                int hallwayNodeSourceNumber = hallwayNodeInFrontOfSource?.Number ?? 0;
+                int hallwayNodeTargetNumber = hallwayNodeInFrontOfTarget?.Number ?? 0;
+
+                return Hallway
+                    .Where(h => h.Number > Math.Min(hallwayNodeSourceNumber, hallwayNodeTargetNumber) && h.Number < Math.Max(hallwayNodeSourceNumber, hallwayNodeTargetNumber))
+                    .All(n => n.IsEmpty());
+            }
 
             private List<RoomNode> GetReferenceRoom(Amphimod amphimod) => amphimod switch
-	        {
-		        Amphimod.Amber  => Room1,
+            {
+                Amphimod.Amber => Room1,
                 Amphimod.Bronze => Room2,
                 Amphimod.Copper => Room3,
                 Amphimod.Desert => Room4,
@@ -291,18 +353,41 @@ namespace AdventOfCode.Year2021.Day23
                 return roomNode.Number + Math.Abs(hallwayNode.Number - hallwayNodeInFrontOfRoom?.Number ?? 0) + 1;
             }
 
+            private int GetDistance(RoomNode source, RoomNode target)
+            {
+                HallwayNode? hallwayNodeInFrontOfSource = Hallway[source.Room * 2];
+                HallwayNode? hallwayNodeInFrontOfTarget = Hallway[target.Room * 2];
+
+                return source.Number + target.Number + Math.Abs(hallwayNodeInFrontOfSource.Number - hallwayNodeInFrontOfTarget?.Number ?? 0) + 2;
+            }
+
             private int GetConsumedEnergy(HallwayNode hallwayNode, RoomNode roomNode, int stepEnergy) => GetDistance(hallwayNode, roomNode) * stepEnergy;
 
-            private int MoveAmphimod(HallwayNode hallwayNode, RoomNode roomNode, int stepEnergy)
-            {               
+            private int GetConsumedEnergy(RoomNode source, RoomNode target, int stepEnergy) => GetDistance(source, target) * stepEnergy;
+
+            private int MoveAmphimod(HallwayNode hallwayNode, RoomNode? roomNode, int stepEnergy)
+            {
+                if (roomNode == null)
+                    return 0;
+
                 (hallwayNode.Amphimod, roomNode.Amphimod) = (roomNode.Amphimod, hallwayNode.Amphimod);
 
                 return GetConsumedEnergy(hallwayNode, roomNode, stepEnergy);
             }
 
+            private int MoveAmphimod(RoomNode source, RoomNode? target, int stepEnergy)
+            {
+                if (target == null)
+                    return 0;
+
+                (target.Amphimod, source.Amphimod) = (source.Amphimod, target.Amphimod);
+
+                return GetConsumedEnergy(source, target, stepEnergy);
+            }
+
             public override string ToString()
             {
-                StringBuilder sb = new ();
+                StringBuilder sb = new();
 
                 sb.AppendLine($"#############");
                 sb.AppendLine($"#{string.Join(string.Empty, Hallway)}#");
@@ -315,6 +400,7 @@ namespace AdventOfCode.Year2021.Day23
 
                 return sb.ToString();
             }
+
         }
 
         private abstract class Node
@@ -372,5 +458,5 @@ namespace AdventOfCode.Year2021.Day23
             Copper = 100,
             Desert = 1000
         }
-	}
+    }
 }
