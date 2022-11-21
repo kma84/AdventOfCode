@@ -61,39 +61,51 @@ class ArgsHelper
     public List<int> Days { get; set; } = new();
     public bool Validated { get; set; }
 
-    // TODO Use regex to match accepted combinations of args
     public static ArgsHelper CreateFromArgs(string[] args)
     {
-        static List<int> GetDays(string? arg)
-        {
-            if (arg != null)
-                return int.TryParse(arg, out int argDay) ? new List<int> { argDay } : new List<int>();
-
-            return Enumerable.Range(1, 25).ToList();
-        }
-
         ArgsHelper result = new() { Validated = false };
 
-        if (args.Length < 1 || args.Length > 2)
+        if (args.Length > 2)
             return result;
 
-        string arg0 = args[0];
+        string? arg0 = args.ElementAtOrDefault(0);
         string? arg1 = args.ElementAtOrDefault(1);
 
-        if (int.TryParse(arg0, out int year))
+        List<int> years = GetYears(arg0);
+
+        if (years.Any())
         {
-            var days = GetDays(arg1);
+            List<int> days = GetDays(arg1);
 
             if (days.Any())
             {
-                result.Years = new() { year };
+                result.Years = years;
                 result.Days = days;
                 result.Validated = true;
+
                 return result;
             }
         }
 
         // Not validated result
         return result;
+    }
+
+    private static List<int> GetYears(string? arg)
+    {
+        if (arg != null)
+            return int.TryParse(arg, out int argYear) ? new List<int> { argYear } : new List<int>();
+
+        int firstAoCYear = 2015;
+
+        return Enumerable.Range(firstAoCYear, DateTime.Now.Year - firstAoCYear + 1).ToList();
+    }
+
+    private static List<int> GetDays(string? arg)
+    {
+        if (arg != null)
+            return int.TryParse(arg, out int argDay) ? new List<int> { argDay } : new List<int>();
+
+        return Enumerable.Range(1, 25).ToList();
     }
 }
