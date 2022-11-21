@@ -22,4 +22,6 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger:"console;verbosity=detailed"
+      run: dotnet test --no-build --logger:"console;verbosity=detailed"
+    - name: Run
+      run: dotnet run --no-build --project AdventOfCode
