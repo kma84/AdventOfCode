@@ -1,6 +1,5 @@
 ﻿
 using AdventOfCode.Core;
-using AdventOfCode.Core.Interfaces;
 
 
 var argsHelper = ArgsHelper.CreateFromArgs(args);
@@ -12,47 +11,7 @@ if (!argsHelper.Validated)
     return;
 }
 
-RunProblems(argsHelper.Years, argsHelper.Days);
-
-
-void RunProblems(List<int> years, List<int> days)
-{
-    var iProblemType = typeof(IProblem);
-    var problemTypes = AppDomain.CurrentDomain.GetAssemblies()
-        .SelectMany(a => a.GetTypes())
-        .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass);
-
-    Dictionary<ProblemAttribute, Type> dictProblems = problemTypes.ToDictionary(t => (ProblemAttribute)t.GetCustomAttributes(typeof(ProblemAttribute), true).First());
-
-    foreach (int year in years)
-    {
-        foreach (int day in days)
-        {
-            var problemMeta = dictProblems.Keys.FirstOrDefault(pa => pa.Year == year && pa.Day == day);
-
-            if (problemMeta != null)
-            {
-                IProblem? problem = (IProblem?)Activator.CreateInstance(dictProblems[problemMeta]);
-                string input = File.ReadAllText(GetInputPath(year, day, problem?.Debug ?? false));
-
-                Console.WriteLine($"Year {year}, Day {day}, Problem: {problemMeta.ProblemName}");
-                Console.WriteLine($"Part1: {problem?.Part1(input)}");
-                Console.WriteLine($"Part2: {problem?.Part2(input)}");
-                Console.WriteLine();
-            }
-        }
-    }
-}
-
-string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? "debugInput.txt" : "input.txt");
-
-string GetDayPath(int year, int day)
-{
-    char dirSeparator = Path.DirectorySeparatorChar;
-    string appDir = AppDomain.CurrentDomain.BaseDirectory;
-
-    return $"{appDir}Year{year}{dirSeparator}Day{day:D2}{dirSeparator}";
-}
+Runner.RunProblems(argsHelper.Years, argsHelper.Days);
 
 
 class ArgsHelper
