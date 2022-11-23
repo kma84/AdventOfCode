@@ -1,9 +1,4 @@
 ﻿using AdventOfCode.Core.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdventOfCode.Core
 {
@@ -16,15 +11,28 @@ namespace AdventOfCode.Core
 
             foreach ((int year, List<ProblemData> yearProblems) in problemsByYear)
             {
+                Console.WriteLine($"    {year}");
+
+                Console.WriteLine(
+                    """
+                        ╔═════╦════════════════════════════╦══════════════════╦═══════════════╦══════════════════╦═══════════════╗
+                        ║ Day ║ Problem                    ║ Part 1 Solution  ║ Part 1 Time   ║ Part 2 Solution  ║ Part 2 Time   ║
+                        ╠═════╬════════════════════════════╬══════════════════╬═══════════════╬══════════════════╬═══════════════╣
+                    """
+                );
+
                 foreach (ProblemData problemData in yearProblems)
                 {
                     string input = File.ReadAllText(problemData.InputPath);
 
-                    Console.WriteLine($"Year {year}, Day {problemData.GetDay()}, Problem: {problemData.GetName()}");
-                    Console.WriteLine($"Part1: {problemData.Problem.Part1(input)}");
-                    Console.WriteLine($"Part2: {problemData.Problem.Part2(input)}");
-                    Console.WriteLine();
+                    Console.WriteLine($"    ║{problemData.GetDay(), 4} ║ {problemData.GetName(), -27}║ {problemData.Problem.Part1(input), 16} ║               ║ {problemData.Problem.Part2(input),16} ║               ║");
                 }
+
+                Console.WriteLine(
+                    """
+                        ╚═════╩════════════════════════════╩══════════════════╩═══════════════╩══════════════════╩═══════════════╝
+                    """
+                );
             }
         }
 
