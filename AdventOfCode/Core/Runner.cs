@@ -1,4 +1,6 @@
 ﻿using AdventOfCode.Core.Interfaces;
+using System.Diagnostics;
+using static AdventOfCode.Year2021.Day08.Problem;
 
 namespace AdventOfCode.Core
 {
@@ -11,28 +13,26 @@ namespace AdventOfCode.Core
 
             foreach ((int year, List<ProblemData> yearProblems) in problemsByYear)
             {
-                Console.WriteLine($"    {year}");
-
-                Console.WriteLine(
-                    """
-                        ╔═════╦════════════════════════════╦══════════════════╦═══════════════╦══════════════════╦═══════════════╗
-                        ║ Day ║ Problem                    ║ Part 1 Solution  ║ Part 1 Time   ║ Part 2 Solution  ║ Part 2 Time   ║
-                        ╠═════╬════════════════════════════╬══════════════════╬═══════════════╬══════════════════╬═══════════════╣
-                    """
-                );
+                WriteTableTitle(year);
+                WriteTableHeader();
 
                 foreach (ProblemData problemData in yearProblems)
                 {
                     string input = File.ReadAllText(problemData.InputPath);
 
-                    Console.WriteLine($"    ║{problemData.GetDay(), 4} ║ {problemData.GetName(), -27}║ {problemData.Problem.Part1(input), 16} ║               ║ {problemData.Problem.Part2(input),16} ║               ║");
+                    // TODO extract function
+                    Stopwatch watchPart1 = Stopwatch.StartNew();
+                    string solutionPart1 = problemData.Problem.Part1(input);
+                    watchPart1.Stop();
+
+                    Stopwatch watchPart2 = Stopwatch.StartNew();
+                    string solutionPart2 = problemData.Problem.Part2(input);
+                    watchPart2.Stop();
+
+                    WriteTableRow(problemData.GetDay(), problemData.GetName(), solutionPart1, watchPart1.Elapsed, solutionPart2, watchPart2.Elapsed);
                 }
 
-                Console.WriteLine(
-                    """
-                        ╚═════╩════════════════════════════╩══════════════════╩═══════════════╩══════════════════╩═══════════════╝
-                    """
-                );
+                CloseTable();
             }
         }
 
@@ -67,13 +67,6 @@ namespace AdventOfCode.Core
                                 InputPath = GetInputPath(year, day, problem.Debug)
                             });
                         }
-
-                        //string input = File.ReadAllText(GetInputPath(year, day, problem?.Debug ?? false));
-
-                        //Console.WriteLine($"Year {year}, Day {day}, Problem: {problemMeta.ProblemName}");
-                        //Console.WriteLine($"Part1: {problem?.Part1(input)}");
-                        //Console.WriteLine($"Part2: {problem?.Part2(input)}");
-
                     }
                 }
 
@@ -94,14 +87,44 @@ namespace AdventOfCode.Core
             return $"{appDir}Year{year}{dirSeparator}Day{day:D2}{dirSeparator}";
         }
 
+        private static void WriteTableTitle(int year) => Console.WriteLine($"    {year}");
+
+        private static void WriteTableRow(int day, string problemName, string solutionPart1, TimeSpan tsPart1, string solutionPart2, TimeSpan tsPart2)
+        {
+            string timeSpanFormat = "s\\.ffffff";
+            string row = string.Format(
+                "    ║ {0, 3} ║ {1, -26} ║ {2, 16} ║ {3, 15} ║ {4, 16} ║ {5, 15} ║",
+                day,
+                problemName,
+                solutionPart1,
+                tsPart1.ToString(timeSpanFormat),
+                solutionPart2,
+                tsPart2.ToString(timeSpanFormat)
+            );
+
+            Console.WriteLine(row);
+        }
+
+        private static void WriteTableHeader() => Console.WriteLine(
+            """
+                ╔═════╦════════════════════════════╦══════════════════╦═════════════════╦══════════════════╦═════════════════╗
+                ║ Day ║ Problem                    ║ Part 1 Solution  ║ Part 1 Time (s) ║ Part 2 Solution  ║ Part 2 Time (s) ║
+                ╠═════╬════════════════════════════╬══════════════════╬═════════════════╬══════════════════╬═════════════════╣
+            """
+        );
+
+        private static void CloseTable() => Console.WriteLine(
+            """
+                ╚═════╩════════════════════════════╩══════════════════╩═════════════════╩══════════════════╩═════════════════╝
+            """
+        );
+
 
         private class ProblemData
         {
             public required IProblem Problem { get; set; }
             public required ProblemAttribute ProblemInfo { get; set; }
             public required string InputPath { get; set; }
-            //public string Part1Solution { get; set; }
-            //public string Part2Solution { get; set; }
 
             public int GetDay() => ProblemInfo.Day;
             public string GetName() => ProblemInfo.ProblemName;
