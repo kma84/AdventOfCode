@@ -1,6 +1,5 @@
 ﻿using AdventOfCode.Core.Interfaces;
 using System.Diagnostics;
-using static AdventOfCode.Year2021.Day08.Problem;
 
 namespace AdventOfCode.Core
 {
@@ -20,20 +19,23 @@ namespace AdventOfCode.Core
                 {
                     string input = File.ReadAllText(problemData.InputPath);
 
-                    // TODO extract function
-                    Stopwatch watchPart1 = Stopwatch.StartNew();
-                    string solutionPart1 = problemData.Problem.Part1(input);
-                    watchPart1.Stop();
+                    (string solutionPart1, TimeSpan elapsedTimePart1) = RunProblem(problemData.Problem.Part1, input);
+                    (string solutionPart2, TimeSpan elapsedTimePart2) = RunProblem(problemData.Problem.Part2, input);
 
-                    Stopwatch watchPart2 = Stopwatch.StartNew();
-                    string solutionPart2 = problemData.Problem.Part2(input);
-                    watchPart2.Stop();
-
-                    WriteTableRow(problemData.GetDay(), problemData.GetName(), solutionPart1, watchPart1.Elapsed, solutionPart2, watchPart2.Elapsed);
+                    WriteTableRow(problemData.GetDay(), problemData.GetName(), solutionPart1, elapsedTimePart1, solutionPart2, elapsedTimePart2);
                 }
 
                 CloseTable();
             }
+        }
+
+        private static (string solution, TimeSpan elapsedTime) RunProblem(Func<string, string> partFunction, string input)
+        {
+            Stopwatch watch = Stopwatch.StartNew();
+            string solution = partFunction(input);
+            watch.Stop();
+
+            return (solution, watch.Elapsed);
         }
 
         private static List<(int year, List<ProblemData> problemsData)> GetProblemsByYear(List<int> years, List<int> days)
