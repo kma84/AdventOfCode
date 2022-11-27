@@ -1,6 +1,5 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using System.Linq;
 
 namespace AdventOfCode.Test
 {
@@ -46,8 +45,7 @@ namespace AdventOfCode.Test
             Assert.IsNotNull(AppDomain.CurrentDomain.BaseDirectory);
         }
 
-
-        string GetDayPath(int year, int day)
+        static string GetDayPath(int year, int day)
         {
             char dirSeparator = Path.DirectorySeparatorChar;
             string appDir = AppDomain.CurrentDomain.BaseDirectory;

@@ -21,8 +21,8 @@ namespace AdventOfCode.Core
 
                     (string solutionPart1, TimeSpan elapsedTimePart1) = RunProblem(problemData.Problem.Part1, input);
                     (string solutionPart2, TimeSpan elapsedTimePart2) = RunProblem(problemData.Problem.Part2, input);
-
-                    WriteTableRow(problemData.GetDay(), problemData.GetName(), solutionPart1, elapsedTimePart1, solutionPart2, elapsedTimePart2);
+                                        
+                    WriteTableRow(FormatRow(problemData, solutionPart1, elapsedTimePart1, solutionPart2, elapsedTimePart2));
                 }
 
                 CloseTable();
@@ -75,11 +75,18 @@ namespace AdventOfCode.Core
                 if (yearProblems.Any())
                     problems.Add((year, yearProblems));
             }
-
+            
             return problems;
         }
 
-        private static string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? Constants.DEBUG_INPUT_DEFAULT_FILENAME : Constants.INPUT_FILENAME);
+        private static ConsoleColor GetPerformanceColor(TimeSpan elapsedTimePart) => elapsedTimePart.TotalMilliseconds switch
+        {
+            <= Constants.PERFORMANCE_MS_GREEN_THRESHOLD => ConsoleColor.Green,
+            > Constants.PERFORMANCE_MS_GREEN_THRESHOLD and <= Constants.PERFORMANCE_MS_YELLOW_THRESHOLD => ConsoleColor.Yellow,
+            _ => ConsoleColor.Red,
+        };
+
+    private static string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? Constants.DEBUG_INPUT_DEFAULT_FILENAME : Constants.INPUT_FILENAME);
 
         private static string GetDayPath(int year, int day)
         {
@@ -91,21 +98,25 @@ namespace AdventOfCode.Core
 
         private static void WriteTableTitle(int year) => Console.WriteLine($"    {year}");
 
-        private static void WriteTableRow(int day, string problemName, string solutionPart1, TimeSpan tsPart1, string solutionPart2, TimeSpan tsPart2)
+        private static void WriteTableRow(TableRow row)
         {
-            string timeSpanFormat = "s\\.ffffff";
-            string row = string.Format(
-                "    ║ {0, 3} ║ {1, -26} ║ {2, 16} ║ {3, 15} ║ {4, 16} ║ {5, 15} ║",
-                day,
-                problemName,
-                solutionPart1,
-                tsPart1.ToString(timeSpanFormat),
-                solutionPart2,
-                tsPart2.ToString(timeSpanFormat)
-            );
+            Console.Write($"    ║ {row.Day, 3} ║ {row.ProblemName,-26} ║ {row.SolutionPart1,16} ║ ");
 
-            Console.WriteLine(row);
+            Console.ForegroundColor = row.PerformanceColorPart1;
+            Console.Write(row.ElapsedTimePart1Str.PadLeft(15));
+            Console.ResetColor();
+
+            Console.Write($" ║ {row.SolutionPart2, 16} ║ ");
+
+            Console.ForegroundColor = row.PerformanceColorPart2;
+            Console.Write(row.ElapsedTimePart2Str.PadLeft(15));
+            Console.ResetColor();
+
+            Console.Write($" ║");
+
+            Console.WriteLine();
         }
+
 
         private static void WriteTableHeader() => Console.WriteLine(
             """
@@ -120,6 +131,21 @@ namespace AdventOfCode.Core
                 ╚═════╩════════════════════════════╩══════════════════╩═════════════════╩══════════════════╩═════════════════╝
             """
         );
+
+        private static TableRow FormatRow(ProblemData problemData, string solutionPart1, TimeSpan elapsedTimePart1, string solutionPart2, TimeSpan elapsedTimePart2)
+        {
+            string timeSpanFormat = "s\\.ffffff";
+
+            ConsoleColor performanceColorPart1 = GetPerformanceColor(elapsedTimePart1);
+            ConsoleColor performanceColorPart2 = GetPerformanceColor(elapsedTimePart2);
+            string elapsedTimePart1Str = elapsedTimePart1.ToString(timeSpanFormat);
+            string elapsedTimePart2Str = elapsedTimePart2.ToString(timeSpanFormat);
+
+            return new(problemData.GetDay().ToString(), problemData.GetName(), solutionPart1, elapsedTimePart1Str, performanceColorPart1, solutionPart2, elapsedTimePart2Str, performanceColorPart2);
+        }
+
+
+        private record TableRow(string Day, string ProblemName, string SolutionPart1, string ElapsedTimePart1Str, ConsoleColor PerformanceColorPart1, string SolutionPart2, string ElapsedTimePart2Str, ConsoleColor PerformanceColorPart2);
 
 
         private class ProblemData
