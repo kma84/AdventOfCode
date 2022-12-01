@@ -96,7 +96,7 @@ namespace AdventOfCode.Core
             return $"{appDir}Year{year}{dirSeparator}Day{day:D2}{dirSeparator}";
         }
 
-        private static void WriteTableTitle(int year) => Console.WriteLine($"    {year}");
+        private static void WriteTableTitle(int year) => Console.WriteLine($"\n    {year}");
 
         private static void WriteTableRow(TableRow row)
         {
