@@ -1,6 +1,5 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year2022.Day06
 {
