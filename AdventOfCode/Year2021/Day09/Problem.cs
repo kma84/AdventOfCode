@@ -13,7 +13,7 @@ namespace AdventOfCode.Year2021.Day09
         public string Part1(string input)
         {
             int totalRiesgos = 0;
-            int[,] heightmap = GetMapa(input);
+            int[,] heightmap = InputUtils.ParseIntMatrix(input);
 
             List<(int x, int y)> puntosBajos = GetPuntosBajos(heightmap);
 
@@ -33,7 +33,7 @@ namespace AdventOfCode.Year2021.Day09
             List<(int, int)> puntosComprobados = new();
             List<int> basinSizes = new(); 
             
-            int[,] heightmap = GetMapa(input);
+            int[,] heightmap = InputUtils.ParseIntMatrix(input);
             List<(int x, int y)> puntosBajos = GetPuntosBajos(heightmap);
 
             foreach ((int, int) punto in puntosBajos)
@@ -121,24 +121,5 @@ namespace AdventOfCode.Year2021.Day09
             return basinSize;
         }
 
-
-        private static int[,] GetMapa(string input)
-        {            
-            string[] filas = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
-
-            int maxX = filas.First().Length;
-            int maxY = filas.Length;
-            int[,] mapa = new int[maxY, maxX];
-
-            for (int y = 0; y < maxY; y++)
-            {
-                for (int x = 0; x < maxX; x++)
-                {
-                    mapa[y, x] = (int)char.GetNumericValue(filas[y][x]);
-                }
-            }
-
-            return mapa;
-        }
     }
 }
