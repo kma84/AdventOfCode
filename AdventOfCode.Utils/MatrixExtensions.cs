@@ -52,6 +52,21 @@ namespace AdventOfCode.Utils
         }
 
 
+        public static IEnumerable<(int x, int y, T value)> Where<T>(this T[,] matrix, Func<T, bool> predicate)
+        {
+            for (int y = 0; y < matrix.GetLength(0); y++)
+            {
+                for (int x = 0; x < matrix.GetLength(1); x++)
+                {
+                    if (predicate(matrix[y, x]))
+                        yield return (x, y, matrix[y, x]);
+                }
+            }
+
+            yield break;
+        }
+
+
         public static List<(int x, int y, T value)> GetCrossAdjacents<T>(this T[,] matrix, int x, int y)
         {
             CheckBounds(matrix, x, y);
