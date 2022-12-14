@@ -106,6 +106,7 @@ namespace AdventOfCode.Year2022.Day13
         }
 
 
+        // TODO ver parser del 2021 18
         private static List<Pair> GetPairs(string[] lines)
         {
             List<Pair> pairs = new();
