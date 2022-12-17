@@ -13,13 +13,36 @@ namespace AdventOfCode.Year2022.Day14
         private const char ROCK = '#';
 
         public bool Debug => false;
-        public static bool Visualize => true;
+        public static bool Visualize => false;
 
 
         public string Part1(string input)
         {
             (char[,] map, Point source) = GetMap(input.GetLines());
 
+            SimulateFallingSand(map, source);
+
+            if (Visualize)
+                map.Print();
+
+            return map.Count(c => c == SAND_UNIT).ToString();
+        }
+
+        public string Part2(string input)
+        {
+            (char[,] map, Point source) = GetMap(input.GetLines(), addFloor: true);
+
+            SimulateFallingSand(map, source);
+
+            if (Visualize)
+                map.Print();
+
+            return map.Count(c => c == SAND_UNIT).ToString();
+        }
+
+
+        private static void SimulateFallingSand(char[,] map, Point source)
+        {
             Point? currentPoint = source;
             Point? nextPoint = null;
 
@@ -34,19 +57,8 @@ namespace AdventOfCode.Year2022.Day14
                 else
                     currentPoint = nextPoint;
             }
-            while (currentPoint != null);
-
-            if (Visualize)
-                map.Print();
-
-            return map.Count(c => c == SAND_UNIT).ToString();
+            while (currentPoint != null && nextPoint != source);
         }
-
-        public string Part2(string input)
-        {
-			return string.Empty;
-        }
-
 
         private static Point? GetSandNextPosition(char[,] map, Point currentPoint)
         {
@@ -71,16 +83,17 @@ namespace AdventOfCode.Year2022.Day14
             return currentPoint;
         }
 
-        private static (char[,] map, Point source) GetMap(string[] lines)
+        private static (char[,] map, Point source) GetMap(string[] lines, bool addFloor = false)
         {
             List<List<Point>> coordinates = GetCoordinates(lines);
             List<Point> points = coordinates.SelectMany(l => l).ToList();
-            int minX = points.Min(p => p.X);
+
+            int maxY = points.Max(p => p.Y) + 1 + (addFloor ? 2 : 0);
+            int minX = addFloor ? 500 - maxY : points.Min(p => p.X);
 
             points.ForEach(p => { p.X -= minX; });
 
-            int maxX = points.Max(p => p.X) + 1;
-            int maxY = points.Max(p => p.Y) + 1;
+            int maxX = addFloor ? maxY * 2 : points.Max(p => p.X) + 1;
 
             char[,] map = new char[maxY, maxX];
             map.Fill(AIR);
@@ -92,6 +105,9 @@ namespace AdventOfCode.Year2022.Day14
                     CreateRocks(map, coordinateList[i - 1], coordinateList[i]);
                 }
             }
+
+            if (addFloor)
+                CreateRocks(map, new Point(0, maxY - 1), new Point(maxX - 1, maxY - 1));
 
             // Source
             Point sourcePoint = new(500 - minX, 0);
