@@ -75,8 +75,8 @@ namespace AdventOfCode.Year2021.Day22
             if (cuboids.Count == 1)
                 return cuboids[0].GetArea();
 
-            if (cache.ContainsKey(cuboids))
-                return cache[cuboids];
+            if (cache.TryGetValue(cuboids, out long value))
+                return value;
 
             List<Cuboid> intersections = new();
             for (int i = 1; i < cuboids.Count; i++)

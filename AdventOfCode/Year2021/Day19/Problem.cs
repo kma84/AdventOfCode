@@ -82,7 +82,6 @@ namespace AdventOfCode.Year2021.Day19
         }
 
 
-
         private static int GetManhattanDistance((int x, int y, int z) pointA, (int x, int y, int z) pointB)
         {
             return Math.Abs(pointA.x - pointB.x) + Math.Abs(pointA.y - pointB.y) + Math.Abs(pointA.z - pointB.z);

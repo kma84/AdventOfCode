@@ -44,7 +44,7 @@ namespace AdventOfCode.Year2022.Day14
         private static void SimulateFallingSand(char[,] map, Point source)
         {
             Point? currentPoint = source;
-            Point? nextPoint = null;
+            Point? nextPoint;
 
             do
             {
