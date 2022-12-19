@@ -19,8 +19,40 @@ namespace AdventOfCode.Year2022.Day15
             int maxXT = sensors.Select(s => s.ExclusionZone.pointB.X).Max();
             int y = Debug ? 10 : 2000000;
 
+            var intervals = GetIntervals(sensors, y);
+            int baeconsInY = sensors.Select(s => s.ClosestBeacon).Distinct().Count(p => p.Y == y);
+
+            return (CountPositions(intervals) - baeconsInY).ToString();
+        }
+
+        public string Part2(string input)
+        {
+            List<Sensor> sensors = GetSensorsInfo(input.GetLines());
+            int distressSignalZone = Debug ? 20 : 4000000;
+            Point? distressPoint = null;
+
+            Parallel.For(0, distressSignalZone, (i, state) =>
+            {
+                int lineIndex = distressSignalZone - i - 1;
+                var intervals = GetIntervals(sensors, lineIndex);
+
+                if (intervals.Count > 2)
+                {
+                    distressPoint = new Point(intervals[1].x + 1, intervals[1].y);
+                    state.Stop();
+                }
+            });
+
+            long tuningFrequency = (distressPoint?.X ?? 0) * 4000000L + (distressPoint?.Y ?? 0);
+
+            return tuningFrequency.ToString();
+        }
+
+
+        private static List<(int x, int y, bool startOrEnd)> GetIntervals(List<Sensor> sensors, int y)
+        {
             // Indexes where the exclusion zones of each sensor begin and end (for line y). True for begin, false for end.
-            List<(int index, bool startOrEnd)> intervals = new();
+            List<(int x, int y, bool startOrEnd)> intervals = new();
 
             foreach (Sensor sensor in sensors.Where(s => s.ExclusionZone.pointA.Y <= y && s.ExclusionZone.pointC.Y >= y))
             {
@@ -30,29 +62,19 @@ namespace AdventOfCode.Year2022.Day15
                 int intervalStart = minX + distanceToY;
                 int intervalEnd = maxX - distanceToY;
 
-                intervals.Add((intervalStart, true));
-                intervals.Add((intervalEnd, false));
+                intervals.Add((intervalStart, y, true));
+                intervals.Add((intervalEnd, y, false));
             }
 
-            intervals = SimplifyIntervals(intervals);            
-            int baeconsInY = sensors.Select(s => s.ClosestBeacon).Distinct().Count(p => p.Y == y);
-
-            return (CountPositions(intervals) - baeconsInY).ToString();
+            return SimplifyIntervals(intervals);
         }
 
-
-        public string Part2(string input)
+        private static List<(int x, int y, bool startOrEnd)> SimplifyIntervals(List<(int x, int y, bool startOrEnd)> intervals)
         {
-			return string.Empty;
-        }
+            var orderedIntervals = intervals.OrderBy(i => i.x).ThenByDescending(i => i.startOrEnd);
 
-
-        private static List<(int index, bool startOrEnd)> SimplifyIntervals(List<(int index, bool startOrEnd)> intervals)
-        {
-            var orderedIntervals = intervals.OrderBy(i => i.index).ThenByDescending(i => i.startOrEnd);
-
-            List<(int index, bool startOrEnd)> newIntervals = new();
-            Stack<(int index, bool startOrEnd)> stack = new();
+            List<(int x, int y, bool startOrEnd)> newIntervals = new();
+            Stack<(int x, int y, bool startOrEnd)> stack = new();
 
             foreach (var currentPair in orderedIntervals)
             {
@@ -75,19 +97,17 @@ namespace AdventOfCode.Year2022.Day15
             return newIntervals;
         }
 
-
-        private static int CountPositions(List<(int index, bool startOrEnd)> intervals)
+        private static int CountPositions(List<(int x, int y, bool startOrEnd)> intervals)
         {
             int count = 0;
 
             for (int i = 0; i < intervals.Count - 1; i++)
             {
-                count += intervals[i + 1].index - intervals[i].index + 1;
+                count += intervals[i + 1].x - intervals[i].x + 1;
             }
 
             return count;
         }
-
 
         private static List<Sensor> GetSensorsInfo(string[] lines)
         {
