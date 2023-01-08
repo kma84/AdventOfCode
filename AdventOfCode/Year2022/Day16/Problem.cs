@@ -27,7 +27,6 @@ namespace AdventOfCode.Year2022.Day16
             List<TreeNode> expandedTree = CreateExpandedTreePart2(nodes, pathsLength, minutes: 26);
 
             return GetLongestPathLength(expandedTree).ToString();
-            //return string.Empty;
         }
 
 
@@ -52,9 +51,9 @@ namespace AdventOfCode.Year2022.Day16
         private static List<TreeNode> CreateExpandedTreePart1(List<Node> nodes, Dictionary<(string source, string target), int> pathsLength, int minutes)
         {
             var nodesWithFlowRatePositive = nodes.Where(n => n.FlowRate > 0).ToImmutableList();
-            Dictionary<string, int> cache = new ();
+            Dictionary<string, int> cache = new();
 
-            TreeNode root = new(nodes[0].Name) { ClosedNodes = nodesWithFlowRatePositive };            
+            TreeNode root = new(nodes[0].Name) { ClosedNodes = nodesWithFlowRatePositive };
             root.AdjacentNodes.AddRange(GetDecendentsPart1(root, pathsLength, minutes, cache));
 
             return TopologicalSort(root);
@@ -78,8 +77,6 @@ namespace AdventOfCode.Year2022.Day16
                             ClosedNodes = current.ClosedNodes.Remove(next)
                         };
 
-
-
                         if (newNode.ClosedNodes.Any())
                         {
                             string key = GetKeyNodeStr(newNode, remainingMinutes);
@@ -99,8 +96,6 @@ namespace AdventOfCode.Year2022.Day16
                             }
                         }
 
-                            
-
                         branch.Add(newNode);
                     }
                 }
@@ -109,82 +104,83 @@ namespace AdventOfCode.Year2022.Day16
             return branch;
         }
 
-        private static string GetKeyNodeStr(TreeNode treeNode, int remainingMinutes) => 
+        private static string GetKeyNodeStr(TreeNode treeNode, int remainingMinutes) =>
             treeNode.Name + "_" + string.Join(string.Empty, treeNode.ClosedNodes.Select(cn => cn.Name).OrderBy(n => n)) + "_" + remainingMinutes;
+
+
+        private static string GetKeyNodeStrPart2(TreeNodeP2 treeNode, int remainingMinutes, int elephantRemainingMinutes) =>
+            treeNode.HumanCurrentNode.Name + "_" + treeNode.ElephantCurrentNode.Name + "_" +
+            string.Join(string.Empty, treeNode.ClosedNodes.Select(cn => cn.Name).OrderBy(n => n)) + "_"
+            + remainingMinutes + "_" + elephantRemainingMinutes;
+
 
         private static List<TreeNode> CreateExpandedTreePart2(List<Node> nodes, Dictionary<(string source, string target), int> pathsLength, int minutes)
         {
             var nodesWithFlowRatePositive = nodes.Where(n => n.FlowRate > 0).ToImmutableList();
-            string nodeName = nodes[0].Name;
+            Dictionary<string, int> cache = new();
 
-            TreeNode root = new(nodeName) 
+            TreeNodeP2 root = new(nodes[0].Name, nodes[0], nodes[0])
             {
-                CurrentNodeName = nodeName,
-                ElephantCurrentNodeName = nodeName,
-                ClosedNodes = nodesWithFlowRatePositive 
+                ClosedNodes = nodesWithFlowRatePositive
             };
-            root.AdjacentNodes.AddRange(GetDecendentsPart2(root, pathsLength, minutes, minutes, true));
+
+            root.AdjacentNodes.AddRange(GetNextStates(root, pathsLength, minutes, minutes, cache));
 
             return TopologicalSort(root);
         }
 
-        private static List<Node> GetDecendentsPart2(TreeNode current, Dictionary<(string source, string target), int> pathsLength, int minutes, int elephantMinutes, bool firstIteration)
+
+        private static List<TreeNodeP2> GetNextStates(TreeNodeP2 current, Dictionary<(string source, string target), int> pathsLength, int humanMinutes, int elephantMinutes, Dictionary<string, int> cache)
         {
-            List<Node> branch = new();
+            //ConcurrentBag<TreeNodeP2> nextStates = new();
+            //Parallel.ForEach(current.ClosedNodes, (Node closedNode) =>
 
-            foreach ((Node? next, Node? elephantNext) in GetPermutations(current, firstIteration))
+            List<TreeNodeP2> nextStates = new();
+            foreach (Node closedNode in current.ClosedNodes)
             {
-                int remainingMinutes = next != null ? Math.Max(minutes - pathsLength[(current.CurrentNodeName, next.Name)], 0) : 0;
-                int elephantRemainingMinutes = elephantNext != null ? Math.Max(elephantMinutes - pathsLength[(current.ElephantCurrentNodeName, elephantNext.Name)], 0) : 0;
+                int humanRemainingMinutes = Math.Max(humanMinutes - pathsLength[(current.HumanCurrentNode.Name, closedNode.Name)], 0);
+                int elephantRemainingMinutes = Math.Max(elephantMinutes - pathsLength[(current.ElephantCurrentNode.Name, closedNode.Name)], 0);
+                int humanTotalFlowRate = humanRemainingMinutes * closedNode.FlowRate;
+                int elephantTotalFlowRate = elephantRemainingMinutes * closedNode.FlowRate;
 
-                if (remainingMinutes > 0 || elephantRemainingMinutes > 0)
+                if (humanTotalFlowRate > 0 || elephantTotalFlowRate > 0)
                 {
-                    ImmutableList<Node> closedNodes = current.ClosedNodes;
+                    bool humanMoves = humanTotalFlowRate >= elephantTotalFlowRate;
 
-                    if (next != null)
-                        closedNodes = closedNodes.Remove(next);
-                    if (elephantNext != null)
-                        closedNodes = closedNodes.Remove(elephantNext);
+                    Node humanNext = humanMoves ? closedNode : current.HumanCurrentNode;
+                    Node elephantNext = humanMoves ? current.ElephantCurrentNode : closedNode;
+                    int newHumanRemainingMinutes = humanMoves ? humanRemainingMinutes : humanMinutes;
+                    int newElephantRemainingMinutes = humanMoves ? elephantMinutes : elephantRemainingMinutes;
+                    int newNodeFlowRate = humanMoves ? humanTotalFlowRate : elephantTotalFlowRate;
 
-                    TreeNode newNode = new($"{next?.Name ?? string.Empty}-{elephantNext?.Name ?? string.Empty}")
+                    TreeNodeP2 newNode = new($"{humanNext.Name}-{elephantNext.Name}", humanNext, elephantNext)
                     {
-                        FlowRate = remainingMinutes * (next?.FlowRate ?? 0) + elephantRemainingMinutes * (elephantNext?.FlowRate ?? 0),
-                        ClosedNodes = closedNodes,
-                        CurrentNodeName = next?.Name ?? current.CurrentNodeName,
-                        ElephantCurrentNodeName = elephantNext?.Name ?? current.ElephantCurrentNodeName
+                        FlowRate = newNodeFlowRate,
+                        ClosedNodes = current.ClosedNodes.Remove(closedNode)
                     };
 
-                    newNode.AdjacentNodes.AddRange(GetDecendentsPart2(newNode, pathsLength, remainingMinutes, elephantRemainingMinutes, false));
-                    branch.Add(newNode);
-                }
-                else
-                    break;
-            }
+                    string key = GetKeyNodeStrPart2(newNode, newHumanRemainingMinutes, newElephantRemainingMinutes);
 
-            return branch;
-        }
+                    if (newNode.ClosedNodes.Any())
+                    {
+                        if (cache.ContainsKey(key))
+                        {
+                            newNode.FlowRate = cache[key];
+                        }
+                        else
+                        {
+                            newNode.AdjacentNodes.AddRange(GetNextStates(newNode, pathsLength, newHumanRemainingMinutes, newElephantRemainingMinutes, cache));
+                            cache.Add(key, GetLongestPathLength(TopologicalSort(newNode)));
+                        }
+                    }
 
-        private static List<(Node? next, Node? elephantNext)> GetPermutations(TreeNode current, bool firstIteration)
-        {
-            List<(Node? next, Node? elephantNext)> permutations = new();
-
-            List<Node?> closedNodes = current.ClosedNodes.Cast<Node?>().ToList();
-            if (closedNodes.Count == 1)
-                closedNodes.Add(null);
-
-            for (int i = 0; i < closedNodes.Count; i++)
-            {
-                for (int j = firstIteration ? i + 1 : 0; j < closedNodes.Count; j++)
-                {
-                    if (i == j)
-                        continue;
-
-                    permutations.Add((closedNodes[i], closedNodes[j]));
+                    nextStates.Add(newNode);
                 }
             }
 
-            return permutations;
+            return nextStates.ToList();
         }
+
 
         private static List<TreeNode> TopologicalSort(TreeNode startNode)
         {
@@ -209,7 +205,7 @@ namespace AdventOfCode.Year2022.Day16
         {
             SortedList<string, Node> nodes = new();
 
-            foreach (string line in lines) 
+            foreach (string line in lines)
             {
                 Match match = InputRegex().Match(line);
                 string nodeName = match.Groups[1].Value;
@@ -306,14 +302,20 @@ namespace AdventOfCode.Year2022.Day16
         {
             // Closed valves in the universe of this node (for the expanded tree)
             public ImmutableList<Node> ClosedNodes { get; set; } = ImmutableList<Node>.Empty;
-            //public int AccumulatedFlowRate { get; set; }
 
-            // Exclusive properties for part two
-            //public int ElephantFlowRate { get; set; }
-            public string CurrentNodeName { get; set; } = string.Empty;
-            public string ElephantCurrentNodeName { get; set; } = string.Empty;
+            public TreeNode(string name) : base(name) { }
+        }
 
-            public TreeNode(string name) : base(name) {}
+        private class TreeNodeP2 : TreeNode
+        {
+            public Node HumanCurrentNode { get; set; }
+            public Node ElephantCurrentNode { get; set; }
+
+            public TreeNodeP2(string name, Node humanCurrent, Node elephantCurrent) : base(name)
+            {
+                HumanCurrentNode = humanCurrent;
+                ElephantCurrentNode = elephantCurrent;
+            }
         }
 
         [GeneratedRegex("Valve ([A-Z]{2}) has flow rate=(\\d+); tunnels? leads? to valves? (.*?)$")]
