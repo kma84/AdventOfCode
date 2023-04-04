@@ -12,7 +12,8 @@ namespace AdventOfCode.Test
             var iProblemType = typeof(IProblem);
             var problemTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
-                .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass);
+                .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass)
+                .Where(t => t.IsDefined(typeof(ProblemAttribute), false));
 
             Dictionary<ProblemAttribute, Type> dictProblems = problemTypes.ToDictionary(t => (ProblemAttribute)t.GetCustomAttributes(typeof(ProblemAttribute), true).First());
 
@@ -29,7 +30,7 @@ namespace AdventOfCode.Test
 
                     string input = File.ReadAllText(dayPath + Constants.INPUT_FILENAME);
                     string[] solutions = File.ReadAllLines(solutionsPath);
-                                        
+
                     string testFailedMessage = $"Unexpected value in year {problemMeta.Year}, day {problemMeta.Day}, problem \"{problemMeta.ProblemName}\", part {{0}}.";
                     string solutionPart1 = solutions.ElementAtOrDefault(0) ?? string.Empty;
                     string solutionPart2 = solutions.ElementAtOrDefault(1) ?? string.Empty;

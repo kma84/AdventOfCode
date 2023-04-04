@@ -21,7 +21,7 @@ namespace AdventOfCode.Core
 
                     (string solutionPart1, TimeSpan elapsedTimePart1) = RunProblem(problemData.Problem.Part1, input);
                     (string solutionPart2, TimeSpan elapsedTimePart2) = RunProblem(problemData.Problem.Part2, input);
-                                        
+
                     WriteTableRow(FormatRow(problemData, solutionPart1, elapsedTimePart1, solutionPart2, elapsedTimePart2));
                 }
 
@@ -45,7 +45,8 @@ namespace AdventOfCode.Core
             var iProblemType = typeof(IProblem);
             var problemTypes = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(a => a.GetTypes())
-                .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass);
+                .Where(t => iProblemType.IsAssignableFrom(t) && t.IsClass)
+                .Where(t => t.IsDefined(typeof(ProblemAttribute), false));
 
             Dictionary<ProblemAttribute, Type> problemsTypes = problemTypes.ToDictionary(t => (ProblemAttribute)t.GetCustomAttributes(typeof(ProblemAttribute), true).First());
 
@@ -63,7 +64,8 @@ namespace AdventOfCode.Core
 
                         if (problem != null)
                         {
-                            yearProblems.Add(new ProblemData {
+                            yearProblems.Add(new ProblemData
+                            {
                                 Problem = problem,
                                 ProblemInfo = problemMeta,
                                 InputPath = GetInputPath(year, day, problem.Debug)
@@ -75,7 +77,7 @@ namespace AdventOfCode.Core
                 if (yearProblems.Any())
                     problems.Add((year, yearProblems));
             }
-            
+
             return problems;
         }
 
@@ -86,7 +88,7 @@ namespace AdventOfCode.Core
             _ => ConsoleColor.Red,
         };
 
-    private static string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? Constants.DEBUG_INPUT_DEFAULT_FILENAME : Constants.INPUT_FILENAME);
+        private static string GetInputPath(int year, int day, bool debug) => GetDayPath(year, day) + (debug ? Constants.DEBUG_INPUT_DEFAULT_FILENAME : Constants.INPUT_FILENAME);
 
         private static string GetDayPath(int year, int day)
         {
@@ -100,13 +102,13 @@ namespace AdventOfCode.Core
 
         private static void WriteTableRow(TableRow row)
         {
-            Console.Write($"    ║ {row.Day, 3} ║ {row.ProblemName,-26} ║ {row.SolutionPart1,16} ║ ");
+            Console.Write($"    ║ {row.Day,3} ║ {row.ProblemName,-26} ║ {row.SolutionPart1,16} ║ ");
 
             Console.ForegroundColor = row.PerformanceColorPart1;
             Console.Write(row.ElapsedTimePart1Str.PadLeft(15));
             Console.ResetColor();
 
-            Console.Write($" ║ {row.SolutionPart2, 16} ║ ");
+            Console.Write($" ║ {row.SolutionPart2,16} ║ ");
 
             Console.ForegroundColor = row.PerformanceColorPart2;
             Console.Write(row.ElapsedTimePart2Str.PadLeft(15));

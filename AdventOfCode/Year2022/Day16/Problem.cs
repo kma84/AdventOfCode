@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Year2022.Day16
 {
-    [Problem(Year = 2022, Day = 16, ProblemName = "Proboscidea Volcanium")]
+    //[Problem(Year = 2022, Day = 16, ProblemName = "Proboscidea Volcanium")]
     internal partial class Problem : IProblem
     {
         public bool Debug => true;
