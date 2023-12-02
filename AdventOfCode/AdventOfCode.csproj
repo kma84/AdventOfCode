@@ -107,6 +107,9 @@
     <None Remove="Year2022\Day16\input.txt" />
     <None Remove="Year2022\Day16\debugInput.txt" />
     <None Remove="Year2022\Day16\solutions.txt" />
+    <None Remove="Year2023\Day01\input.txt" />
+    <None Remove="Year2023\Day01\debugInput.txt" />
+    <None Remove="Year2023\Day01\solutions.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Year2021\Day01\input.txt">
@@ -404,6 +407,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Year2022\Day16\solutions.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2023\Day01\input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2023\Day01\debugInput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Year2023\Day01\solutions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
