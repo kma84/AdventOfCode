@@ -136,14 +136,19 @@ namespace AdventOfCode.Core
 
         private static TableRow FormatRow(ProblemData problemData, string solutionPart1, TimeSpan elapsedTimePart1, string solutionPart2, TimeSpan elapsedTimePart2)
         {
-            string timeSpanFormat = "s\\.ffffff";
+            const string TIME_SPAN_FORMAT = "s\\.ffffff";
+            const int PROBLEM_NAME_MAX_LENGTH = 23;
 
             ConsoleColor performanceColorPart1 = GetPerformanceColor(elapsedTimePart1);
             ConsoleColor performanceColorPart2 = GetPerformanceColor(elapsedTimePart2);
-            string elapsedTimePart1Str = elapsedTimePart1.ToString(timeSpanFormat);
-            string elapsedTimePart2Str = elapsedTimePart2.ToString(timeSpanFormat);
+            string elapsedTimePart1Str = elapsedTimePart1.ToString(TIME_SPAN_FORMAT);
+            string elapsedTimePart2Str = elapsedTimePart2.ToString(TIME_SPAN_FORMAT);
 
-            return new(problemData.GetDay().ToString(), problemData.GetName(), solutionPart1, elapsedTimePart1Str, performanceColorPart1, solutionPart2, elapsedTimePart2Str, performanceColorPart2);
+            string problemName = problemData.GetName();
+            if (problemName.Length > PROBLEM_NAME_MAX_LENGTH)
+                problemName = string.Concat(problemName.AsSpan(0, PROBLEM_NAME_MAX_LENGTH), "...");
+
+            return new(problemData.GetDay().ToString(), problemName, solutionPart1, elapsedTimePart1Str, performanceColorPart1, solutionPart2, elapsedTimePart2Str, performanceColorPart2);
         }
 
 
