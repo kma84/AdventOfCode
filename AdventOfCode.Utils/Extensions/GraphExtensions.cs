@@ -1,10 +1,9 @@
-﻿
-namespace AdventOfCode.Utils
+﻿namespace AdventOfCode.Utils.Extensions
 {
     public static class GraphExtensions
     {
 
-        public static List<T> DijkstraShortestPath<T>(List<(T startNode, T endNode, long cost)> edges, T source, T target) 
+        public static List<T> DijkstraShortestPath<T>(List<(T startNode, T endNode, long cost)> edges, T source, T target)
             where T : class
         {
             Dictionary<T, long> dist = new() { { source, 0 } };
@@ -66,7 +65,7 @@ namespace AdventOfCode.Utils
                         prev[adjacentNode] = currentNode;
                         dist[adjacentNode] = tryDist;
                         hdist[adjacentNode] = tryDist + h(adjacentNode);
-                        
+
                         openSet.Enqueue(adjacentNode, dist[adjacentNode]);
                     }
                 }

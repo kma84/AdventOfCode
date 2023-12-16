@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace AdventOfCode.Utils
+namespace AdventOfCode.Utils.Extensions
 {
     public static class MatrixExtensions
     {
@@ -56,7 +56,7 @@ namespace AdventOfCode.Utils
         {
             CheckBounds(matrix, x, y);
 
-            List<(int x, int y, T value)> crossAdjacents = new ();
+            List<(int x, int y, T value)> crossAdjacents = new();
 
             if (y - 1 >= 0)
                 crossAdjacents.Add((x, y - 1, matrix[y - 1, x]));
@@ -76,7 +76,7 @@ namespace AdventOfCode.Utils
 
         public static List<(int x, int y, T value)> GetAdjacents<T>(this T[,] matrix, int x, int y)
         {
-            List<(int x, int y, T value)> adjacents = GetCrossAdjacents(matrix, x, y);
+            List<(int x, int y, T value)> adjacents = matrix.GetCrossAdjacents(x, y);
 
             if (y - 1 >= 0 && x - 1 >= 0)
                 adjacents.Add((x - 1, y - 1, matrix[y - 1, x - 1]));

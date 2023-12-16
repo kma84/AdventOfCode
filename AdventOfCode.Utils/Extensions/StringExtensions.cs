@@ -1,5 +1,4 @@
-﻿
-namespace AdventOfCode.Utils
+﻿namespace AdventOfCode.Utils.Extensions
 {
     public static class StringExtensions
     {

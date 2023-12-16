@@ -1,6 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils;
+using AdventOfCode.Utils.Extensions;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 

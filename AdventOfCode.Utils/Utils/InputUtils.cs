@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using AdventOfCode.Utils.Extensions;
 
-namespace AdventOfCode.Utils
+namespace AdventOfCode.Utils.Utils
 {
     public static class InputUtils
     {
-        public static int[,] ParseIntMatrix(string matrixStr) => CreateMatrixFromString<int>(matrixStr, (char c) => (int)char.GetNumericValue(c));
+        public static int[,] ParseIntMatrix(string matrixStr) => CreateMatrixFromString(matrixStr, (c) => (int)char.GetNumericValue(c));
 
-        public static char[,] ParseMatrix(string matrixStr) => CreateMatrixFromString<char>(matrixStr, (char c) => c);
+        public static char[,] ParseMatrix(string matrixStr) => CreateMatrixFromString(matrixStr, (c) => c);
 
         private static T[,] CreateMatrixFromString<T>(string matrixStr, Func<char, T> transformFunc)
         {

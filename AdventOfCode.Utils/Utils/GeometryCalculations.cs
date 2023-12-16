@@ -1,7 +1,8 @@
-﻿
-namespace AdventOfCode.Utils.Geometry
+﻿using AdventOfCode.Utils.Classes;
+
+namespace AdventOfCode.Utils.Utils
 {
-    public static class Calculations
+    public static class GeometryCalculations
     {
 
         /// <summary>
@@ -9,7 +10,7 @@ namespace AdventOfCode.Utils.Geometry
         /// </summary>
         public static bool PointBelongsToTriangle(Point point, Point pointA, Point pointB, Point pointC)
         {
-            double denominador = ((pointB.Y - pointC.Y) * (pointA.X - pointC.X) + (pointC.X - pointB.X) * (pointA.Y - pointC.Y));
+            double denominador = (pointB.Y - pointC.Y) * (pointA.X - pointC.X) + (pointC.X - pointB.X) * (pointA.Y - pointC.Y);
             double a = ((pointB.Y - pointC.Y) * (point.X - pointC.X) + (pointC.X - pointB.X) * (point.Y - pointC.Y)) / denominador;
             double b = ((pointC.Y - pointA.Y) * (point.X - pointC.X) + (pointA.X - pointC.X) * (point.Y - pointC.Y)) / denominador;
             double c = 1 - a - b;
@@ -24,9 +25,9 @@ namespace AdventOfCode.Utils.Geometry
         {
             static int dot((int x, int y) u, (int x, int y) v) => u.x * v.x + u.y * v.y;
 
-            var AB = ( x: pointB.X - pointA.X, y: pointB.Y - pointA.Y );
-            var AD = ( x: pointD.X - pointA.X, y: pointD.Y - pointA.Y );
-            var AM = ( x: pointM.X - pointA.X, y: pointM.Y - pointA.Y );
+            var AB = (x: pointB.X - pointA.X, y: pointB.Y - pointA.Y);
+            var AD = (x: pointD.X - pointA.X, y: pointD.Y - pointA.Y);
+            var AM = (x: pointM.X - pointA.X, y: pointM.Y - pointA.Y);
 
             int dotAMAB = dot(AM, AB);
             int dotABAB = dot(AB, AB);

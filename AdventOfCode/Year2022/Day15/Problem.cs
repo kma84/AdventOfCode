@@ -1,7 +1,8 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils;
-using AdventOfCode.Utils.Geometry;
+using AdventOfCode.Utils.Classes;
+using AdventOfCode.Utils.Extensions;
+using AdventOfCode.Utils.Utils;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Year2022.Day15
@@ -58,7 +59,7 @@ namespace AdventOfCode.Year2022.Day15
             {
                 int minX = sensor.ExclusionZone.pointD.X;
                 int maxX = sensor.ExclusionZone.pointB.X;
-                int distanceToY = Calculations.GetManhattanDistance(sensor.ExclusionZone.pointD, new Point(minX, y));
+                int distanceToY = GeometryCalculations.GetManhattanDistance(sensor.ExclusionZone.pointD, new Point(minX, y));
                 int intervalStart = minX + distanceToY;
                 int intervalEnd = maxX - distanceToY;
 
@@ -141,7 +142,7 @@ namespace AdventOfCode.Year2022.Day15
 
             private static (Point pointA, Point pointB, Point pointC, Point pointD) GetExclusionZone(Point sensorPoint, Point closestBeacon)
             {
-                int manhattanDistance = Calculations.GetManhattanDistance(sensorPoint, closestBeacon);
+                int manhattanDistance = GeometryCalculations.GetManhattanDistance(sensorPoint, closestBeacon);
 
                 return (
                     new Point(sensorPoint.X, sensorPoint.Y - manhattanDistance),

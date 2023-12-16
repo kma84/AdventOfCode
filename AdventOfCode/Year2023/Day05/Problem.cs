@@ -1,6 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils;
+using AdventOfCode.Utils.Extensions;
+using Range = AdventOfCode.Utils.Classes.Range;
 
 namespace AdventOfCode.Year2023.Day05
 {
@@ -13,80 +14,88 @@ namespace AdventOfCode.Year2023.Day05
         {
             string[] lines = input.GetLines();
 
-            List<long> seeds = GetSeeds(lines[0]);
+            List<Range> seeds = GetSeeds(lines[0]);
             List<List<MapRecord>> maps = GetMaps(lines.Skip(2).ToList());
-            List<long> locations = new();
+            List<Range> resultSeeds = GetResults(seeds, maps);
 
-            foreach (long seed in seeds)
-            {
-                long location = seed;
-
-                foreach (List<MapRecord> map in maps)
-                {
-                    foreach (MapRecord mapRecord in map)
-                    {
-                        if (location >= mapRecord.SourceRangeStart && location < mapRecord.SourceRangeStart + mapRecord.RangeLength)
-                        {
-                            location = mapRecord.DestinationRangeStart + location - mapRecord.SourceRangeStart;
-                            break;
-                        }
-                    }
-                }
-
-                locations.Add(location);
-            }
-
-            return locations.Min().ToString();
+            return resultSeeds.Min(r => r.Start).ToString();
         }
 
         public string Part2(string input)
         {
             string[] lines = input.GetLines();
 
-            List<SeedRange> seeds = GetSeedRanges(lines[0]);
+            List<Range> seeds = GetSeedRanges(lines[0]);
             List<List<MapRecord>> maps = GetMaps(lines.Skip(2).ToList());
-            long location = 0;
+            List<Range> resultSeeds = GetResults(seeds, maps);
 
-            for (long i = 0; i < long.MaxValue; i++)
-            {
-                long minSeed = i;
-                location = i;
-
-                for (int mapIndex = maps.Count - 1; mapIndex >= 0; mapIndex--)
-                {
-                    foreach (MapRecord mapRecord in maps[mapIndex])
-                    {
-                        if (minSeed >= mapRecord.DestinationRangeStart && minSeed < mapRecord.DestinationRangeStart + mapRecord.RangeLength)
-                        {
-                            minSeed = mapRecord.SourceRangeStart + minSeed - mapRecord.DestinationRangeStart;
-                            break;
-                        }
-                    }
-                }
-
-                if (IsValidSeed(minSeed, seeds))
-                    break;
-            }
-
-            return location.ToString();
+            return resultSeeds.Min(r => r.Start).ToString();
         }
 
-        private static bool IsValidSeed(long minSeed, List<SeedRange> seeds) => seeds.Any(s => minSeed >= s.RangeStart && minSeed < s.RangeStart + s.RangeLength);
 
-        private static List<SeedRange> GetSeedRanges(string line)
+        private static List<Range> GetResults(List<Range> seeds, List<List<MapRecord>> maps)
         {
-            List<SeedRange> seeds = new();
-            List<long> tokens = GetSeeds(line);
+            List<Range> resultSeeds = seeds;
+
+            foreach (var map in maps)
+            {
+                List<Range> newResultRanges = new();
+
+                foreach (var srcSeed in resultSeeds)
+                {
+                    List<Range> intDest = new();
+                    List<Range> currentRanges = new() { srcSeed };
+                    List<Range> newRanges = new();
+
+                    foreach (var mapRecord in map)
+                    {
+                        foreach (var currentRange in currentRanges)
+                        {
+                            Range? intSrc = srcSeed.Intersect(mapRecord.SourceRecord);
+
+                            if (intSrc != null)
+                            {
+                                intDest.Add(mapRecord.GetDestFromSrcRange(intSrc));
+
+                                newRanges.Clear();
+                                newRanges.AddRange(currentRange.Except(mapRecord.SourceRecord));
+                            }
+                            else if (!newRanges.Contains(currentRange))
+                            {
+                                newRanges.Add(currentRange);
+                            }
+                        }
+
+                        currentRanges = new(newRanges);
+                    }
+
+                    if (!intDest.Any())
+                        newResultRanges.Add(srcSeed);
+
+                    newResultRanges.AddRange(newRanges);
+                    newResultRanges.AddRange(intDest);
+                }
+
+                resultSeeds = newResultRanges;
+            }
+
+            return resultSeeds;
+        }
+
+        private static List<Range> GetSeeds(string line) => line[7..].Split().Select(s => new Range(long.Parse(s))).ToList();
+
+        private static List<Range> GetSeedRanges(string line)
+        {
+            List<Range> seeds = new();
+            List<long> tokens = line[7..].Split().Select(long.Parse).ToList(); ;
 
             for (int i = 0; i < tokens.Count; i += 2)
             {
-                seeds.Add(new SeedRange(tokens[i], tokens[i + 1]));
+                seeds.Add(new Range(tokens[i], tokens[i] + tokens[i + 1] - 1));
             }
 
             return seeds;
         }
-
-        private static List<long> GetSeeds(string line) => line[7..].Split().Select(long.Parse).ToList();
 
         private static List<List<MapRecord>> GetMaps(List<string> lines)
         {
@@ -97,9 +106,17 @@ namespace AdventOfCode.Year2023.Day05
             {
                 string[] tokens = lines[i].Split();
 
-                if (long.TryParse(tokens[0], out long destinationRangeStart))
+                if (long.TryParse(tokens[0], out long dest))
                 {
-                    maps[mapIndex].Add(new MapRecord(destinationRangeStart, long.Parse(tokens[1]), long.Parse(tokens[2])));
+                    long src = long.Parse(tokens[1]);
+                    long length = long.Parse(tokens[2]);
+
+                    MapRecord mapRecord = new(
+                        new Range(dest, dest + length - 1),
+                        new Range(src, src + length - 1)
+                    );
+
+                    maps[mapIndex].Add(mapRecord);
                 }
                 else if (tokens.Length > 1)
                 {
@@ -110,10 +127,18 @@ namespace AdventOfCode.Year2023.Day05
 
             return maps;
         }
+                
 
+        private record MapRecord(Range DestinationRecord, Range SourceRecord)
+        {
+            public Range GetDestFromSrcRange(Range src)
+            {
+                long startOffset = src.Start - SourceRecord.Start;
+                long endOffset = SourceRecord.End - src.End;
 
-        private record MapRecord(long DestinationRangeStart, long SourceRangeStart, long RangeLength);
+                return new Range(DestinationRecord.Start + startOffset, DestinationRecord.End - endOffset);
+            }
+        }
 
-        private record SeedRange(long RangeStart, long RangeLength);
-	}
+    }
 }
