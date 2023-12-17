@@ -1,6 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils.Utils;
+using AdventOfCode.Utils;
 
 namespace AdventOfCode.Year2021.Day09
 {

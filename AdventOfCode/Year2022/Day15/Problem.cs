@@ -2,7 +2,7 @@ using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
 using AdventOfCode.Utils.Classes;
 using AdventOfCode.Utils.Extensions;
-using AdventOfCode.Utils.Utils;
+using AdventOfCode.Utils;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Year2022.Day15

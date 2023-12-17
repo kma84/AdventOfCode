@@ -63,13 +63,15 @@ namespace AdventOfCode.Generator.Properties {
         /// <summary>
         ///   Busca una cadena traducida similar a using AdventOfCode.Core;
         ///using AdventOfCode.Core.Interfaces;
-        ///using AdventOfCode.Utils;
+        ///using AdventOfCode.Utils.Extensions;
         ///
         ///namespace AdventOfCode.Year{0}.Day{1:D2}
         ///{{
         ///    [Problem(Year = {0}, Day = {1}, ProblemName = &quot;&quot;)]
         ///    internal class Problem : IProblem
         ///    {{
+        ///        public bool Debug =&gt; false;
+        ///
         ///        public string Part1(string input)
         ///        {{
         ///			return string.Empty;

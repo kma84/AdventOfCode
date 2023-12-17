@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Utils.Extensions;
 
-namespace AdventOfCode.Utils.Utils
+namespace AdventOfCode.Utils
 {
     public static class InputUtils
     {
