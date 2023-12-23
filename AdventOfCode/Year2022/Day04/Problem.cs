@@ -27,7 +27,7 @@ namespace AdventOfCode.Year2022.Day04
 
         private static bool AssignmentsFullyOverlap(Assignment a1, Assignment a2) => (a1.Min <= a2.Min && a1.Max >= a2.Max) || (a2.Min <= a1.Min && a2.Max >= a1.Max);
 
-        private bool AssignmentsPartiallyOverlap(Assignment a1, Assignment a2) => (a1.Min <= a2.Max && a1.Max >= a2.Min) || (a1.Min <= a2.Max && a1.Max >= a2.Min);
+        private static bool AssignmentsPartiallyOverlap(Assignment a1, Assignment a2) => (a1.Min <= a2.Max && a1.Max >= a2.Min) || (a1.Min <= a2.Max && a1.Max >= a2.Min);
 
 
         private record Assignment(int Min, int Max);

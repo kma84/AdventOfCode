@@ -67,7 +67,7 @@ namespace AdventOfCode.Year2021.Day22
         }
 
 
-        private long GetArea(List<Cuboid> cuboids, Dictionary<List<Cuboid>, long> cache)
+        private static long GetArea(List<Cuboid> cuboids, Dictionary<List<Cuboid>, long> cache)
         {
             if (!cuboids.Any())
                 return 0;
