@@ -11,64 +11,46 @@ namespace AdventOfCode.Year2022.Day12
 
         public string Part1(string input)
         {
-            Point startPoint = new(0, 0);
-            Point endPoint = new(0, 0);
             char[,] map = InputUtils.ParseMatrix(input);
 
-            for (int y = 0; y < map.GetLength(0); y++)
-            {
-                for (int x = 0; x < map.GetLength(1); x++)
-                {
-                    if (map[y, x] == 'S')
-                    {
-                        map[y, x] = 'a';
-                        startPoint = new(x, y);
-                    }
+            Point startPoint = FindAndReplacePoint(CURRENT_POSITION, LOWEST_ELEVATION, map);
+            Point endPoint = FindAndReplacePoint(BEST_SIGNAL, HIGHEST_ELEVATION, map);
+            bool targetReachedFunc(Point p, char[,] _) => p == endPoint;
 
-                    if (map[y, x] == 'E')
-                    {
-                        map[y, x] = 'z';
-                        endPoint = new(x, y);
-                    }
-                }
-            }
-
-            return GetNumSteps(startPoint, endPoint, map).ToString();
+            return GetNumSteps(startPoint, map, Direction.ASCENDING, targetReachedFunc).ToString();
         }
 
         public string Part2(string input)
         {
             char[,] map = InputUtils.ParseMatrix(input);
-            Point startPoint = new(0, 0);
-            Point endPoint = new(0, 0);
+            
+            FindAndReplacePoint(CURRENT_POSITION, LOWEST_ELEVATION, map);
+            Point startPoint = FindAndReplacePoint(BEST_SIGNAL, HIGHEST_ELEVATION, map);
+            static bool targetReachedFunc(Point p, char[,] m) => m[p.Y, p.X] == LOWEST_ELEVATION;
 
-            for (int y = 0; y < map.GetLength(0); y++)
-            {
-                for (int x = 0; x < map.GetLength(1); x++)
-                {
-                    if (map[y, x] == 'S')
-                    {
-                        map[y, x] = 'a';
-                    }
-
-                    if (map[y, x] == 'E')
-                    {
-                        map[y, x] = 'z';
-                        startPoint = new(x, y);
-                    }
-                }
-            }
-
-            return GetNumStepsPart2(startPoint, map).ToString();
+            return GetNumSteps(startPoint, map, Direction.DESCENDING, targetReachedFunc).ToString();
         }
 
 
-        private static List<char> GetCharValue() => Enumerable.Range('a', 26).Select(c => (char)c).Union(
+        private static readonly char CURRENT_POSITION = 'S';
+        private static readonly char BEST_SIGNAL = 'E';
+        private static readonly char LOWEST_ELEVATION = 'a';
+        private static readonly char HIGHEST_ELEVATION = 'z';
+
+        private static List<char> CHAR_VALUES => Enumerable.Range('a', 26).Select(c => (char)c).Union(
                Enumerable.Range('A', 26).Select(c => (char)c)
            ).ToList();
 
 
-        private static int GetNumSteps(Point startPoint, Point endPoint, char[,] map)
+        private static Point FindAndReplacePoint(char targetPoint, char newPoint, char[,] map)
+        {
+            (int x, int y, _) = map.Where(c => c == targetPoint).Single();
+            map[y, x] = newPoint;
+
+            return new(x, y);
+        }
+
+        private static int GetNumSteps(Point startPoint, char[,] map, Direction direction, Func<Point, char[,], bool> TargetReachedFunc)
         {
             Dictionary<Point, int> dist = new() { { startPoint, 0 } };
             Dictionary<Point, Point?> prev = new() { { startPoint, default } };
@@ -80,16 +62,16 @@ namespace AdventOfCode.Year2022.Day12
             {
                 Point currentState = priorityQueue.Dequeue();
 
-                if (currentState == endPoint)
+                if (TargetReachedFunc(currentState, map))
                 {
                     return dist[currentState];
                 }
 
-                foreach ((Point nextPoint, int nextPointDist) in GetNextPoints(currentState, map))
+                foreach ((Point nextPoint, int nextPointDist) in GetNextPoints(currentState, map, direction))
                 {
                     int tryDist = dist[currentState] + nextPointDist;
 
-                    if (!dist.ContainsKey(nextPoint) || tryDist < dist[nextPoint])
+                    if (!dist.TryGetValue(nextPoint, out int distNextPoint) || tryDist < distNextPoint)
                     {
                         dist[nextPoint] = tryDist;
                         prev[nextPoint] = currentState;
@@ -101,44 +83,11 @@ namespace AdventOfCode.Year2022.Day12
             return 0;
         }
 
-        private static int GetNumStepsPart2(Point startPoint, char[,] map)
-        {
-            Dictionary<Point, int> dist = new() { { startPoint, 0 } };
-            Dictionary<Point, Point?> prev = new() { { startPoint, default } };
-            PriorityQueue<Point, int> priorityQueue = new();
-
-            priorityQueue.Enqueue(startPoint, dist[startPoint]);
-
-            while (priorityQueue.Count > 0)
-            {
-                Point currentState = priorityQueue.Dequeue();
-
-                if (map[currentState.Y, currentState.X] == 'a')
-                {
-                    return dist[currentState];
-                }
-
-                foreach ((Point nextPoint, int nextPointDist) in GetNextPointsPart2(currentState, map))
-                {
-                    int tryDist = dist[currentState] + nextPointDist;
-
-                    if (!dist.ContainsKey(nextPoint) || tryDist < dist[nextPoint])
-                    {
-                        dist[nextPoint] = tryDist;
-                        prev[nextPoint] = currentState;
-                        priorityQueue.Enqueue(nextPoint, dist[nextPoint]);
-                    }
-                }
-            }
-
-            return 0;
-        }
-
-        private static IEnumerable<(Point nextPoint, int dist)> GetNextPointsPart2(Point currentState, char[,] map)
+        private static IEnumerable<(Point nextPoint, int dist)> GetNextPoints(Point currentState, char[,] map, Direction direction)
         {
             foreach (var (x, y, dest) in map.GetCrossAdjacents(currentState.X, currentState.Y))
             {
-                int dist = GetCharValue().IndexOf(map[currentState.Y, currentState.X]) - GetCharValue().IndexOf(dest);
+                int dist = (CHAR_VALUES.IndexOf(dest) - CHAR_VALUES.IndexOf(map[currentState.Y, currentState.X])) * (int)direction;
 
                 if (dist <= 1)
                 {
@@ -149,21 +98,13 @@ namespace AdventOfCode.Year2022.Day12
             yield break;
         }
 
-        private static IEnumerable<(Point nextPoint, int dist)> GetNextPoints(Point currentState, char[,] map)
-        {
-            foreach (var (x, y, dest) in map.GetCrossAdjacents(currentState.X, currentState.Y))
-            {
-                int dist = GetCharValue().IndexOf(dest) - GetCharValue().IndexOf(map[currentState.Y, currentState.X]);
-
-                if (dist <= 1)
-                {
-                    yield return new(new (x, y), 1);
-                }
-            }
-
-            yield break;
-        }
 
         private record Point(int X, int Y);
+
+        private enum Direction 
+        {
+            DESCENDING = -1,
+            ASCENDING = 1,
+        }
     }
 }
