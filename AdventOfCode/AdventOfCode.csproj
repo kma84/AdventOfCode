@@ -27,7 +27,7 @@
       <UserProperties properties_4launchsettings_1json__JsonSchema="" />
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)' == 'Debug'">
     <Exec Command="powershell -ExecutionPolicy Bypass -File Scripts\encrypt_inputs.ps1" />
   </Target>
 </Project>
