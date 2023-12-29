@@ -28,6 +28,6 @@
     </VisualStudio>
   </ProjectExtensions>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="call Scripts\encrypt_inputs.bat $(ProjectDir)" />
+    <Exec Command="if &quot;$(Configuration)&quot; == &quot;Debug&quot; (call Scripts\encrypt_inputs.bat $(ProjectDir))" />
   </Target>
 </Project>
