@@ -23,10 +23,14 @@ namespace AdventOfCode.Test
 
                 string dayPath = GetDayPath(problemMeta.Year, problemMeta.Day);
                 string solutionsPath = dayPath + Constants.SOLUTIONS_FILENAME;
+                string inputPath = dayPath + Constants.INPUT_FILENAME;
 
                 if (File.Exists(solutionsPath))
                 {
                     Console.WriteLine($"Testing year {problemMeta.Year}, day {problemMeta.Day}, problem \"{problemMeta.ProblemName}\"");
+
+                    if (!File.Exists(inputPath))
+                        Decryptor.DecryptFile(inputPath + Constants.ENCRYPTED_FILE_EXTENSION, inputPath);
 
                     string input = File.ReadAllText(dayPath + Constants.INPUT_FILENAME);
                     string[] solutions = File.ReadAllLines(solutionsPath);
@@ -42,11 +46,9 @@ namespace AdventOfCode.Test
                         Assert.AreEqual(solutionPart2, problem?.Part2(input), string.Format(testFailedMessage, 2));
                 }
             }
-
-            Assert.IsNotNull(AppDomain.CurrentDomain.BaseDirectory);
         }
 
-        static string GetDayPath(int year, int day)
+        private static string GetDayPath(int year, int day)
         {
             char dirSeparator = Path.DirectorySeparatorChar;
             string appDir = AppDomain.CurrentDomain.BaseDirectory;

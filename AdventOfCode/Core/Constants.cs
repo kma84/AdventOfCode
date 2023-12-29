@@ -4,6 +4,7 @@
     {
         public const string SOLUTIONS_FILENAME = "solutions.txt";
         public const string INPUT_FILENAME = "input.txt";
+        public const string ENCRYPTED_FILE_EXTENSION = ".gpg";
         public const string DEBUG_INPUT_DEFAULT_FILENAME = "debugInput.txt";
 
         public const double PERFORMANCE_MS_GREEN_THRESHOLD = 300;

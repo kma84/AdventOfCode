@@ -57,20 +57,14 @@ namespace AdventOfCode.Core
                 foreach (int day in days)
                 {
                     var problemMeta = problemsTypes.Keys.FirstOrDefault(pa => pa.Year == year && pa.Day == day);
+                    ProblemData? problemData = CreateProblem(year, day, problemMeta, problemsTypes);
 
-                    if (problemMeta != null)
+                    if (problemData != null)
                     {
-                        IProblem? problem = (IProblem?)Activator.CreateInstance(problemsTypes[problemMeta]);
+                        if (!File.Exists(problemData.InputPath))
+                            Decryptor.DecryptFile(problemData.InputPath + Constants.ENCRYPTED_FILE_EXTENSION, problemData.InputPath);
 
-                        if (problem != null)
-                        {
-                            yearProblems.Add(new ProblemData
-                            {
-                                Problem = problem,
-                                ProblemInfo = problemMeta,
-                                InputPath = GetInputPath(year, day, problem.Debug)
-                            });
-                        }
+                        yearProblems.Add(problemData);
                     }
                 }
 
@@ -79,6 +73,28 @@ namespace AdventOfCode.Core
             }
 
             return problems;
+        }
+
+        private static ProblemData? CreateProblem(int year, int day, ProblemAttribute? problemMeta, Dictionary<ProblemAttribute, Type> problemsTypes)
+        {
+            ProblemData? problemData = null;
+
+            if (problemMeta != null)
+            {
+                IProblem? problem = (IProblem?)Activator.CreateInstance(problemsTypes[problemMeta]);
+
+                if (problem != null)
+                {
+                    problemData = new()
+                    {
+                        Problem = problem,
+                        ProblemInfo = problemMeta,
+                        InputPath = GetInputPath(year, day, problem.Debug)
+                    };
+                }
+            }
+
+            return problemData;
         }
 
         private static ConsoleColor GetPerformanceColor(TimeSpan elapsedTimePart) => elapsedTimePart.TotalMilliseconds switch

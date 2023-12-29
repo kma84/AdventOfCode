@@ -36,12 +36,9 @@ void GenerateFiles(List<int> years, List<int> days)
 
                 File.WriteAllText(dayPath + "Problem.cs", string.Format(Resources.ProblemTemplate, year, day));
                 File.Create(dayPath + "input.txt");
+                File.Create(dayPath + "input.txt.gpg");
                 File.Create(dayPath + "debugInput.txt");
                 File.Create(dayPath + "solutions.txt");
-
-                UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "input.txt"));
-                UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "debugInput.txt"));
-                UpdateCsproj(xdoc, Path.Combine("Year" + year, "Day" + day.ToString("D2"), "solutions.txt"));
 
                 Console.WriteLine($"Files generated for year {year} day {day}");
             }
@@ -49,71 +46,6 @@ void GenerateFiles(List<int> years, List<int> days)
     }
 
     xdoc.Save(GetCsprojPath());
-}
-
-// TODO refactor
-void UpdateCsproj(XDocument xdoc, string input)
-{
-    var projectElement = xdoc.Elements("Project").FirstOrDefault();
-
-    if (projectElement != null)
-    {
-        // ItemGroup None
-        List<XElement> itemGropNone = projectElement.Elements("ItemGroup")?.Elements("None")?.Ancestors("ItemGroup")?.ToList() ?? new();
-
-        if (!itemGropNone.Any())
-        {
-            XElement newItemGroup = new XElement("ItemGroup");
-            projectElement.Add(newItemGroup);
-            itemGropNone.Add(newItemGroup);
-        }
-
-        if (!itemGropNone.Elements("None").Attributes("Remove").Any(a => a.Value == input))
-        {
-            XElement newNoneElement = new XElement("None");
-            newNoneElement.Add(new XAttribute("Remove", input));
-            itemGropNone.First().Add(newNoneElement);
-        }
-
-
-        // ItemGroup Content
-        List<XElement> itemGropContent = projectElement.Elements("ItemGroup")?.Elements("Content")?.Ancestors("ItemGroup")?.ToList() ?? new();
-
-        if (!itemGropContent.Any())
-        {
-            XElement newItemGroup = new XElement("ItemGroup");
-            projectElement.Add(newItemGroup);
-            itemGropContent.Add(newItemGroup);
-        }
-
-        if (itemGropContent.Elements("Content").Attributes("Include").Any(a => a.Value == input))
-        {
-            XElement contentElement = itemGropContent.Elements("Content").Where(e => e.Attributes("Include").Any(a => a.Value == input)).First();
-            XElement? copyElement = contentElement.Elements("CopyToOutputDirectory").FirstOrDefault();
-
-            if (copyElement == null)
-            {
-                XElement newCopyElement = new XElement("CopyToOutputDirectory", "PreserveNewest");
-                contentElement.Add(newCopyElement);
-            }
-            else if (copyElement.Value != "PreserveNewest")
-            {
-                copyElement.SetValue("PreserveNewest");
-            }
-        }
-        else
-        {
-            XElement newCopyElement = new XElement("CopyToOutputDirectory", "PreserveNewest");
-
-            XElement newContentElement = new XElement("Content");
-            newContentElement.Add(newCopyElement);
-            newContentElement.Add(new XAttribute("Include", input));
-            newContentElement.Add();
-
-            itemGropContent.First().Add(newContentElement);
-        }
-
-    }
 }
 
 string GetAppDir() => AppDomain.CurrentDomain.BaseDirectory;
