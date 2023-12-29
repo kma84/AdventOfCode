@@ -22,6 +22,10 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
+      env:
+        AOC_INPUTS: ${{ secrets.AOC_INPUTS }}
       run: dotnet test --no-build --logger:"console;verbosity=detailed"
     - name: Run
+      env:
+        AOC_INPUTS: ${{ secrets.AOC_INPUTS }}
       run: dotnet run --no-build --project AdventOfCode
