@@ -20,6 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
+      shell: pwsh
       run: dotnet build --no-restore
     - name: Test
       env:
