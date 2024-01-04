@@ -36,7 +36,6 @@ void GenerateFiles(List<int> years, List<int> days)
 
                 File.WriteAllText(dayPath + "Problem.cs", string.Format(Resources.ProblemTemplate, year, day));
                 File.Create(dayPath + "input.txt");
-                File.Create(dayPath + "input.txt.gpg");
                 File.Create(dayPath + "debugInput.txt");
                 File.Create(dayPath + "solutions.txt");
 
