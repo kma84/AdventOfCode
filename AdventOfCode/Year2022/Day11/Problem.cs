@@ -9,6 +9,9 @@ namespace AdventOfCode.Year2022.Day11
     {
         public bool Debug => false;
 
+        internal static readonly char[] MONKEY_SEPARATORS = [' ', ':'];
+        internal static readonly char[] ITEMS_SEPARATORS = [' ', ':', ','];
+
         public string Part1(string input) => GetMonkeyBusinessLvl(GetMonkeys(input.GetLines()), rounds: 20).ToString();
 
         public string Part2(string input) => GetMonkeyBusinessLvl(GetMonkeys(input.GetLines()), rounds: 10000, simplifyWorryLvl: true).ToString();
@@ -42,13 +45,13 @@ namespace AdventOfCode.Year2022.Day11
 
         private static List<Monkey> GetMonkeys(string[] lines)
         {
-            List < Monkey > monkeys = new ();
+            List < Monkey > monkeys = [];
             int i = 0;
 
             while (i < lines.Length)
             {
-                int monkeyNumber = int.Parse(lines[i++].Split(new char[] { ' ', ':' }, StringSplitOptions.RemoveEmptyEntries)[1]);
-                Queue<long> items = new(lines[i++].Split(new char[] { ' ', ':', ',' }, StringSplitOptions.RemoveEmptyEntries).Skip(2).Select(s => long.Parse(s)));
+                int monkeyNumber = int.Parse(lines[i++].Split(MONKEY_SEPARATORS, StringSplitOptions.RemoveEmptyEntries)[1]);
+                Queue<long> items = new(lines[i++].Split(ITEMS_SEPARATORS, StringSplitOptions.RemoveEmptyEntries).Skip(2).Select(s => long.Parse(s)));
                 Func<long, long> operation = GetOperationFromInput(lines[i++]);
                 int divisibleBy = int.Parse(lines[i++].Split().Last());
                 int monkeyToThrowIfTrue = int.Parse(lines[i++].Split().Last());

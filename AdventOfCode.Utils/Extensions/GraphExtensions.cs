@@ -24,9 +24,10 @@
                 {
                     long tryDist = dist[currentNode] + graph[currentNode][adjacentNode];
 
-                    if (!dist.ContainsKey(adjacentNode) || tryDist < dist[adjacentNode])
+                    if (!dist.TryGetValue(adjacentNode, out long distAdjacentNode) || tryDist < distAdjacentNode)
                     {
-                        dist[adjacentNode] = tryDist;
+                        distAdjacentNode = tryDist;
+                        dist[adjacentNode] = distAdjacentNode;
                         prev[adjacentNode] = currentNode;
                         priorityQueue.Enqueue(adjacentNode, dist[adjacentNode]);
                     }
@@ -60,10 +61,11 @@
                 {
                     long tryDist = dist[currentNode] + graph[currentNode][adjacentNode];
 
-                    if (!dist.ContainsKey(adjacentNode) || tryDist < dist[adjacentNode])
+                    if (!dist.TryGetValue(adjacentNode, out long distAdjacentNode) || tryDist < distAdjacentNode)
                     {
                         prev[adjacentNode] = currentNode;
-                        dist[adjacentNode] = tryDist;
+                        distAdjacentNode = tryDist;
+                        dist[adjacentNode] = distAdjacentNode;
                         hdist[adjacentNode] = tryDist + h(adjacentNode);
 
                         openSet.Enqueue(adjacentNode, dist[adjacentNode]);
@@ -71,21 +73,22 @@
                 }
             }
 
-            return new List<T>();
+            return [];
         }
 
         private static Dictionary<T, Dictionary<T, long>> GetGraph<T>(List<(T startNode, T endNode, long cost)> edges) where T : class
         {
-            Dictionary<T, Dictionary<T, long>> graph = new();
+            Dictionary<T, Dictionary<T, long>> graph = [];
 
             foreach (var (startNode, endNode, cost) in edges)
             {
-                if (!graph.ContainsKey(startNode))
+                if (!graph.TryGetValue(startNode, out Dictionary<T, long>? graphStartNode))
                 {
-                    graph[startNode] = new Dictionary<T, long>();
+                    graphStartNode = ([]);
+                    graph[startNode] = graphStartNode;
                 }
 
-                graph[startNode][endNode] = cost;
+                graphStartNode[endNode] = cost;
             }
 
             return graph;
@@ -102,7 +105,7 @@
                 currentPathNode = prev[currentPathNode];
             }
 
-            return path.ToList();
+            return [.. path];
         }
 
     }

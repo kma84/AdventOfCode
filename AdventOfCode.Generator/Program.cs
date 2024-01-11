@@ -61,8 +61,8 @@ string GetDayPath(int year, int day)
 
 class ArgsHelper
 {
-    public List<int> Years { get; set; } = new();
-    public List<int> Days { get; set; } = new();
+    public List<int> Years { get; set; } = [];
+    public List<int> Days { get; set; } = [];
     public bool Validated { get; set; }
 
     public static ArgsHelper CreateFromArgs(string[] args)
@@ -70,7 +70,7 @@ class ArgsHelper
         static List<int> GetDays(string? arg)
         {
             if (arg != null)
-                return int.TryParse(arg, out int argDay) ? new List<int> { argDay } : new List<int>();
+                return int.TryParse(arg, out int argDay) ? [argDay] : [];
 
             return Enumerable.Range(1, 25).ToList();
         }
@@ -87,9 +87,9 @@ class ArgsHelper
         {
             var days = GetDays(arg1);
 
-            if (days.Any())
+            if (days.Count != 0)
             {
-                result.Years = new() { year };
+                result.Years = [year];
                 result.Days = days;
                 result.Validated = true;
                 return result;

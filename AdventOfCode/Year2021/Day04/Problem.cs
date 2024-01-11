@@ -122,7 +122,7 @@ namespace AdventOfCode.Year2021.Day04
 
             Casilla[,] board = new Casilla[TAMANYO_FILA_COLUMNA, TAMANYO_FILA_COLUMNA];
             int filaBoard = 0;
-            List<Casilla[,]> boards = new();
+            List<Casilla[,]> boards = [];
 
             foreach (string fila in filas.Skip(1))
             {

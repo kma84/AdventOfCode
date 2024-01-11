@@ -134,11 +134,11 @@ namespace AdventOfCode.Year2022.Day14
 
         private static List<List<Point>> GetCoordinates(string[] lines)
         {
-            List<List<Point>> coordinates = new ();
+            List<List<Point>> coordinates = [];
 
             foreach (string line in lines)
             {
-                List<Point> points = new ();
+                List<Point> points = [];
 
                 foreach (string pair in line.Split(" -> "))
                 {
@@ -152,16 +152,10 @@ namespace AdventOfCode.Year2022.Day14
             return coordinates;
         }
 
-        private class Point
+        private class Point(int x, int y)
         {
-            public int X { get; set; }
-            public int Y { get; set; }
-
-            public Point(int x, int y)
-            {
-                X = x;
-                Y = y;
-            }
+            public int X { get; set; } = x;
+            public int Y { get; set; } = y;
         };
 	}
 }

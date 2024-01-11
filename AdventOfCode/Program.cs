@@ -16,8 +16,8 @@ Runner.RunProblems(argsHelper.Years, argsHelper.Days);
 
 class ArgsHelper
 {
-    public List<int> Years { get; set; } = new();
-    public List<int> Days { get; set; } = new();
+    public List<int> Years { get; set; } = [];
+    public List<int> Days { get; set; } = [];
     public bool Validated { get; set; }
 
     public static ArgsHelper CreateFromArgs(string[] args)
@@ -32,11 +32,11 @@ class ArgsHelper
 
         List<int> years = GetYears(arg0);
 
-        if (years.Any())
+        if (years.Count != 0)
         {
             List<int> days = GetDays(arg1);
 
-            if (days.Any())
+            if (days.Count != 0)
             {
                 result.Years = years;
                 result.Days = days;
@@ -53,7 +53,7 @@ class ArgsHelper
     private static List<int> GetYears(string? arg)
     {
         if (arg != null)
-            return int.TryParse(arg, out int argYear) ? new List<int> { argYear } : new List<int>();
+            return int.TryParse(arg, out int argYear) ? [argYear] : [];
 
         int firstAoCYear = 2015;
 
@@ -63,7 +63,7 @@ class ArgsHelper
     private static List<int> GetDays(string? arg)
     {
         if (arg != null)
-            return int.TryParse(arg, out int argDay) ? new List<int> { argDay } : new List<int>();
+            return int.TryParse(arg, out int argDay) ? [argDay] : [];
 
         return Enumerable.Range(1, 25).ToList();
     }

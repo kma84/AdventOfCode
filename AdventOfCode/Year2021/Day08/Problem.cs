@@ -98,18 +98,18 @@ namespace AdventOfCode.Year2021.Day08
         {
             string[] filas = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
 
-            List<Input> inputs = new();
+            List<Input> inputs = [];
 
             foreach (string fila in filas)
             {
                 string[] patronesYDigitos = fila.Split('|');
 
                 List<SecuenciaDigito> patrones = patronesYDigitos[0].Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                   .Select(s => new SecuenciaDigito { Secuencia = s.ToCharArray().ToList() })
+                                   .Select(s => new SecuenciaDigito { Secuencia = [.. s.ToCharArray()] })
                                    .ToList();
 
                 List<SecuenciaDigito> digitos = patronesYDigitos[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                                   .Select(s => new SecuenciaDigito { Secuencia = s.ToCharArray().ToList() })
+                                   .Select(s => new SecuenciaDigito { Secuencia = [.. s.ToCharArray()] })
                                    .ToList();
 
                 inputs.Add(new Input
@@ -125,15 +125,15 @@ namespace AdventOfCode.Year2021.Day08
 
         public class Input
         {
-            public List<SecuenciaDigito> Patrones { get; set; } = new ();
-            public List<SecuenciaDigito> Digitos { get; set; } = new();
+            public List<SecuenciaDigito> Patrones { get; set; } = [];
+            public List<SecuenciaDigito> Digitos { get; set; } = [];
             public int Valor { get; set; }
         }
 
 
         public class SecuenciaDigito
         {
-            public List<char> Secuencia { get; set; } = new();
+            public List<char> Secuencia { get; set; } = [];
             public string? DigitoCorrespondiente { get; set; }
         }
     }

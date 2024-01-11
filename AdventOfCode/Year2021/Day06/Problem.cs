@@ -50,7 +50,7 @@ namespace AdventOfCode.Year2021.Day06
 
         private static List<long[]> InicializarArrayDias(List<int> pecesIniciales, int dias)
         {
-            List<long[]> listDias = new List<long[]>();
+            List<long[]> listDias = [];
 
             for (int i = 0; i <= dias; i++)
             {

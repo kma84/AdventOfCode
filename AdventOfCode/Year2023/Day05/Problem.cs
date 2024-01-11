@@ -39,13 +39,13 @@ namespace AdventOfCode.Year2023.Day05
 
             foreach (var map in maps)
             {
-                List<Range> newResultRanges = new();
+                List<Range> newResultRanges = [];
 
                 foreach (var srcSeed in resultSeeds)
                 {
-                    List<Range> intDest = new();
-                    List<Range> currentRanges = new() { srcSeed };
-                    List<Range> newRanges = new();
+                    List<Range> intDest = [];
+                    List<Range> currentRanges = [srcSeed];
+                    List<Range> newRanges = [];
 
                     foreach (var mapRecord in map)
                     {
@@ -69,7 +69,7 @@ namespace AdventOfCode.Year2023.Day05
                         currentRanges = new(newRanges);
                     }
 
-                    if (!intDest.Any())
+                    if (intDest.Count == 0)
                         newResultRanges.Add(srcSeed);
 
                     newResultRanges.AddRange(newRanges);
@@ -86,7 +86,7 @@ namespace AdventOfCode.Year2023.Day05
 
         private static List<Range> GetSeedRanges(string line)
         {
-            List<Range> seeds = new();
+            List<Range> seeds = [];
             List<long> tokens = line[7..].Split().Select(long.Parse).ToList(); ;
 
             for (int i = 0; i < tokens.Count; i += 2)
@@ -99,7 +99,7 @@ namespace AdventOfCode.Year2023.Day05
 
         private static List<List<MapRecord>> GetMaps(List<string> lines)
         {
-            List<List<MapRecord>> maps = new();
+            List<List<MapRecord>> maps = [];
             int mapIndex = -1;
 
             for (int i = 0; i < lines.Count; i++)
@@ -120,7 +120,7 @@ namespace AdventOfCode.Year2023.Day05
                 }
                 else if (tokens.Length > 1)
                 {
-                    maps.Add(new List<MapRecord>());
+                    maps.Add([]);
                     mapIndex++;
                 }
             }

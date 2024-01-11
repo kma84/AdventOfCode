@@ -13,7 +13,7 @@ namespace AdventOfCode.Year2022.Day09
         {
             Point head = new(0, 0);
             Point tail = new(0, 0);
-            HashSet<Point> visitedPoints = new() { tail };
+            HashSet<Point> visitedPoints = [tail];
 
             foreach (Movement movement in GetMovements(input.GetLines()))
             {
@@ -39,7 +39,7 @@ namespace AdventOfCode.Year2022.Day09
         public string Part2(string input)
         {
             List<Point> points = Enumerable.Repeat(new Point(0, 0), 10).ToList();
-            HashSet<Point> visitedPoints = new() { points.Last() };
+            HashSet<Point> visitedPoints = [points.Last()];
 
             foreach (Movement movement in GetMovements(input.GetLines()))
             {

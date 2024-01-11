@@ -109,7 +109,7 @@ namespace AdventOfCode.Year2021.Day15
 
         private static List<(Node startNode, Node endNode, long cost)> GetEdges(Node[,] matrix)
         {
-            List<(Node startNode, Node endNode, long cost)> edges = new();
+            List<(Node startNode, Node endNode, long cost)> edges = [];
 
             for (int y = 0; y < matrix.GetLength(0); y++)
             {
@@ -126,20 +126,12 @@ namespace AdventOfCode.Year2021.Day15
         }
 
 
-        private class Node
+        private class Node(int matrixCoordinateX, int matrixCoordinateY, int risk)
         {
-            public int MatrixCoordinateX { get; set; }
-            public int MatrixCoordinateY { get; set; }
-            public int Risk { get; set; }
-            public bool Selected { get; set; }
-
-            public Node(int matrixCoordinateX, int matrixCoordinateY, int risk)
-            {
-                MatrixCoordinateX = matrixCoordinateX;
-                MatrixCoordinateY = matrixCoordinateY;
-                Risk = risk;
-                Selected = false;
-            }
+            public int MatrixCoordinateX { get; set; } = matrixCoordinateX;
+            public int MatrixCoordinateY { get; set; } = matrixCoordinateY;
+            public int Risk { get; set; } = risk;
+            public bool Selected { get; set; } = false;
 
             public override string ToString()
             {

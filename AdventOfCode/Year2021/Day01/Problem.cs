@@ -44,24 +44,22 @@ namespace AdventOfCode.Year2021.Day01
 
         private static int CalcularAumentosProfundidadAgrupados(IEnumerable<int> profundidades)
         {
-            List<int> profundidadesAgrupadas = new();
-            List<int> grupo1 = new();
+            List<int> profundidadesAgrupadas = [];
+            List<int> grupo1 = [];
             List<int>? grupo2 = null;
             List<int>? grupo3 = null;
 
             foreach (int profundidad in profundidades)
             {
                 if (grupo1.Count == 1 && grupo2 == null)
-                    grupo2 = new();
+                    grupo2 = [];
 
                 if (grupo2?.Count == 1 && grupo3 == null)
-                    grupo3 = new();
+                    grupo3 = [];
 
                 grupo1.Add(profundidad);
-                if (grupo2 != null)
-                    grupo2.Add(profundidad);
-                if (grupo3 != null)
-                    grupo3.Add(profundidad);
+                grupo2?.Add(profundidad);
+                grupo3?.Add(profundidad);
 
                 if (grupo1.Count % 3 == 0)
                 {

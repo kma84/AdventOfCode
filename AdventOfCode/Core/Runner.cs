@@ -40,7 +40,7 @@ namespace AdventOfCode.Core
 
         private static List<(int year, List<ProblemData> problemsData)> GetProblemsByYear(List<int> years, List<int> days)
         {
-            List<(int year, List<ProblemData> problemsData)> problems = new();
+            List<(int year, List<ProblemData> problemsData)> problems = [];
 
             var iProblemType = typeof(IProblem);
             var problemTypes = AppDomain.CurrentDomain.GetAssemblies()
@@ -52,7 +52,7 @@ namespace AdventOfCode.Core
 
             foreach (int year in years)
             {
-                List<ProblemData> yearProblems = new();
+                List<ProblemData> yearProblems = [];
 
                 foreach (int day in days)
                 {
@@ -68,7 +68,7 @@ namespace AdventOfCode.Core
                     }
                 }
 
-                if (yearProblems.Any())
+                if (yearProblems.Count != 0)
                     problems.Add((year, yearProblems));
             }
 

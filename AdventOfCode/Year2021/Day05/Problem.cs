@@ -9,6 +9,8 @@ namespace AdventOfCode.Year2021.Day05
     {
         public bool Debug { get; set; } = false;
 
+        internal static readonly string[] SEPARATORS = [",", " -> "];
+
         public string Part1(string input)
         {
             return CalcularPuntosCoincidentes(GetLineas(input), filtrarLineasVerticalesYHorizontales: true).ToString();
@@ -24,17 +26,17 @@ namespace AdventOfCode.Year2021.Day05
         {
             string[] filas = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
 
-            List<Linea> lineas = new();
+            List<Linea> lineas = [];
 
             foreach (string fila in filas)
             {
-                int[] coordenadas = fila.Split(new[] { ",", " -> " }, StringSplitOptions.RemoveEmptyEntries).Select(c => int.Parse(c)).ToArray();
+                int[] coordenadas = fila.Split(SEPARATORS, StringSplitOptions.RemoveEmptyEntries).Select(c => int.Parse(c)).ToArray();
 
                 lineas.Add(new Linea
                 (
                     puntoInicial: new Punto { X = coordenadas[0], Y = coordenadas[1] },
                     puntoFinal: new Punto { X = coordenadas[2], Y = coordenadas[3] },
-                    puntos: new List<Punto>()
+                    puntos: []
                 ));
             }
 
@@ -44,7 +46,7 @@ namespace AdventOfCode.Year2021.Day05
 
         private int CalcularPuntosCoincidentes(List<Linea> lineas, bool filtrarLineasVerticalesYHorizontales)
         {
-            List<Linea> lineasCalculo = new();
+            List<Linea> lineasCalculo = [];
 
             lineas.ForEach((l) =>
             {
@@ -52,7 +54,7 @@ namespace AdventOfCode.Year2021.Day05
                 (
                     puntoInicial: new Punto { X = l.PuntoInicial.X, Y = l.PuntoInicial.Y },
                     puntoFinal: new Punto { X = l.PuntoFinal.X, Y = l.PuntoFinal.Y },
-                    puntos: new()
+                    puntos: []
                 ));
             });
 
@@ -151,18 +153,11 @@ namespace AdventOfCode.Year2021.Day05
         }
 
 
-        public class Linea
+        public class Linea(Punto puntoInicial, Punto puntoFinal, List<Punto> puntos)
         {
-            public Punto PuntoInicial { get; set; }
-            public Punto PuntoFinal { get; set; }
-            public List<Punto> Puntos { get; set; }
-
-            public Linea(Punto puntoInicial, Punto puntoFinal, List<Punto> puntos)
-            {
-                PuntoInicial = puntoInicial;
-                PuntoFinal = puntoFinal;
-                Puntos = puntos;
-            }
+            public Punto PuntoInicial { get; set; } = puntoInicial;
+            public Punto PuntoFinal { get; set; } = puntoFinal;
+            public List<Punto> Puntos { get; set; } = puntos;
         }
     }
 }

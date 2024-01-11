@@ -11,7 +11,7 @@ namespace AdventOfCode.Year2022.Day10
 
         public string Part1(string input)
         {
-            List<int> interestingSignalIndexes = new() { 20, 60, 100, 140, 180, 220 };
+            List<int> interestingSignalIndexes = [20, 60, 100, 140, 180, 220];
             List<Cycle> cycles = GetCycles(input.GetLines());
 
             return interestingSignalIndexes.Select(i => cycles[i - 1].Start * i).Sum().ToString();
@@ -43,7 +43,7 @@ namespace AdventOfCode.Year2022.Day10
 
         private static List<Cycle> GetCycles(string[] lines)
         {
-            List<Cycle> cycles = new();
+            List<Cycle> cycles = [];
 
             foreach (string line in lines)
                 cycles.AddRange(ProcessLine(line, cycles.LastOrDefault()?.End ?? 1));

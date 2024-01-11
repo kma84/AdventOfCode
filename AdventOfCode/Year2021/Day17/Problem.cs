@@ -9,6 +9,8 @@ namespace AdventOfCode.Year2021.Day17
     {
         public bool Debug { get; set; } = false;
 
+        internal static readonly char[] PARTS_X_SEPARATORS = ['.', '=', ','];
+        internal static readonly char[] PARTS_Y_SEPARATORS = ['.', '='];
 
         public string Part1(string input)
         {
@@ -52,7 +54,7 @@ namespace AdventOfCode.Year2021.Day17
 
         private int? CalculateTrajectory(int startVelX, int startVelY, ((int, int) x, (int, int) y) targetCoords)
         {
-            List<(int x, int y)> points = new();
+            List<(int x, int y)> points = [];
             int x = 0;
             int y = 0;
             int velX = startVelX;
@@ -131,8 +133,8 @@ namespace AdventOfCode.Year2021.Day17
         private static ((int, int) x, (int, int) y) GetInput(string input)
         {
             string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            string[] partsX = parts[2].Split(new char[] { '.', '=', ',' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] partsY = parts[3].Split(new char[] { '.', '=' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] partsX = parts[2].Split(PARTS_X_SEPARATORS, StringSplitOptions.RemoveEmptyEntries);
+            string[] partsY = parts[3].Split(PARTS_Y_SEPARATORS, StringSplitOptions.RemoveEmptyEntries);
 
             return ((int.Parse(partsX[1]), int.Parse(partsX[2])), (int.Parse(partsY[1]), int.Parse(partsY[2])));
         }

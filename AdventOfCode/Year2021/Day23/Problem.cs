@@ -55,9 +55,10 @@ namespace AdventOfCode.Year2021.Day23
                 {
                     int tryDist = dist[currentState] + nextStateDist;
 
-                    if (!dist.ContainsKey(nextState) || tryDist < dist[nextState])
+                    if (!dist.TryGetValue(nextState, out int distNextState) || tryDist < distNextState)
                     {
-                        dist[nextState] = tryDist;
+                        distNextState = tryDist;
+                        dist[nextState] = distNextState;
                         prev[nextState] = currentState;
                         priorityQueue.Enqueue(nextState, dist[nextState]);
                     }
@@ -84,10 +85,10 @@ namespace AdventOfCode.Year2021.Day23
 
             List<char> initialState = Enumerable.Repeat(EMPTY_NODE_CHAR, HALLWAY_LENGTH).ToList();
 
-            List<char> room1 = new() { lines[2][3] };
-            List<char> room2 = new() { lines[2][5] };
-            List<char> room3 = new() { lines[2][7] };
-            List<char> room4 = new() { lines[2][9] };
+            List<char> room1 = [lines[2][3]];
+            List<char> room2 = [lines[2][5]];
+            List<char> room3 = [lines[2][7]];
+            List<char> room4 = [lines[2][9]];
 
             if (part2Extension)
             {
@@ -120,13 +121,13 @@ namespace AdventOfCode.Year2021.Day23
 
         private class Burrow
         {
-            public List<HallwayNode> Hallway { get; set; } = new();
-            public List<RoomNode> Room1 { get; set; } = new();
-            public List<RoomNode> Room2 { get; set; } = new();
-            public List<RoomNode> Room3 { get; set; } = new();
-            public List<RoomNode> Room4 { get; set; } = new();
-            public List<RoomNode> Rooms { get; set; } = new();
-            public List<Node> Nodes { get; set; } = new();
+            public List<HallwayNode> Hallway { get; set; } = [];
+            public List<RoomNode> Room1 { get; set; } = [];
+            public List<RoomNode> Room2 { get; set; } = [];
+            public List<RoomNode> Room3 { get; set; } = [];
+            public List<RoomNode> Room4 { get; set; } = [];
+            public List<RoomNode> Rooms { get; set; } = [];
+            public List<Node> Nodes { get; set; } = [];
 
             public Burrow(int roomCapacity)
             {
@@ -200,7 +201,7 @@ namespace AdventOfCode.Year2021.Day23
                 } while (movementsEnergy != 0);
 
                 if (totalEnergy > 0)
-                    return new() { (GetState(), totalEnergy) };
+                    return [(GetState(), totalEnergy)];
 
                 return GetStatesFromRoomsToHallwayMovements();
             }
@@ -208,7 +209,7 @@ namespace AdventOfCode.Year2021.Day23
 
             private List<(string nextState, int dist)> GetStatesFromRoomsToHallwayMovements()
             {
-                List<(string nextState, int dist)> newStates = new();
+                List<(string nextState, int dist)> newStates = [];
                 string sourceState = GetState();
 
                 foreach (RoomNode roomNode in Rooms.Where(r => r.AmphimodCanMove()))
@@ -403,20 +404,15 @@ namespace AdventOfCode.Year2021.Day23
 
         }
 
-        private abstract class Node
+        private abstract class Node(int number)
         {
-            public int Number { get; set; }
+            public int Number { get; set; } = number;
             public Amphimod? Amphimod { get; set; }
 
             public Node? TopNode { get; set; }
             public Node? RightNode { get; set; }
             public Node? BottomNode { get; set; }
             public Node? LeftNode { get; set; }
-
-            public Node(int number)
-            {
-                Number = number;
-            }
 
             public bool IsEmpty() => Amphimod == null;
 
@@ -426,29 +422,19 @@ namespace AdventOfCode.Year2021.Day23
             }
         }
 
-        private class RoomNode : Node
+        private class RoomNode(int room, int number, Amphimod referenceAmphimod) : Node(number)
         {
-            public int Room { get; set; }
-            public Amphimod ReferenceAmphimod { get; set; }
-
-            public RoomNode(int room, int number, Amphimod referenceAmphimod) : base(number)
-            {
-                Room = room;
-                ReferenceAmphimod = referenceAmphimod;
-            }
+            public int Room { get; set; } = room;
+            public Amphimod ReferenceAmphimod { get; set; } = referenceAmphimod;
 
             private bool IsBlocked() => TopNode?.Amphimod != null;
             public bool IsConsolidated() => ReferenceAmphimod == Amphimod && (BottomNode == null || ((RoomNode)BottomNode).IsConsolidated());
             public bool AmphimodCanMove() => !IsEmpty() && !IsConsolidated() && !IsBlocked();
         }
 
-        private class HallwayNode : Node
+        private class HallwayNode(int number) : Node(number)
         {
             public bool IsInFrontOfRoom { get; set; } = false;
-
-            public HallwayNode(int number) : base(number)
-            {
-            }
         }
 
         private enum Amphimod

@@ -22,11 +22,11 @@ namespace AdventOfCode.Year2023.Day03
 
         private static List<NumberRecord> GetNumbers(char[,] matrix)
         {
-            List<NumberRecord> numbers = new ();
+            List<NumberRecord> numbers = [];
 
             for (int y = 0; y < matrix.GetLength(0); y++)
             {
-                List<char> numberChars = new();
+                List<char> numberChars = [];
                 (int x, int y, char value)? symbol = null;
                 int number;
 

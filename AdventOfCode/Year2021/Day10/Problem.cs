@@ -7,15 +7,15 @@ namespace AdventOfCode.Year2021.Day10
     [Problem(Year = 2021, Day = 10, ProblemName = "Syntax Scoring")]
     internal class Problem : IProblem
     {
-        private static readonly List<char> CARACTERES_APERTURA = new() { '(', '[', '{', '<' };
-        private static readonly List<char> CARACTERES_CIERRE = new() { ')', ']', '}', '>' };
+        private static readonly List<char> CARACTERES_APERTURA = ['(', '[', '{', '<'];
+        private static readonly List<char> CARACTERES_CIERRE = [')', ']', '}', '>'];
 
         public string Part1(string input) => input.GetLines().Select(GetPuntuacionFila).Sum().ToString();
 
         public string Part2(string input)
         {
-            List<string> lineasIncompletas = input.GetLines().Where(l => GetPuntuacionFila(l) == 0).ToList();
-            List<long> puntuaciones = lineasIncompletas.Select(CompletarFila).OrderBy(n => n).ToList();
+            List<string> lineasIncompletas = [.. input.GetLines().Where(l => GetPuntuacionFila(l) == 0)];
+            List<long> puntuaciones = [.. lineasIncompletas.Select(CompletarFila).OrderBy(n => n)];
             
             return puntuaciones[puntuaciones.Count / 2].ToString();
         }

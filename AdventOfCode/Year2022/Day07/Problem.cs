@@ -29,7 +29,7 @@ namespace AdventOfCode.Year2022.Day07
         {
             DirectoryNode rootDir = new() { Name = "/" };
             DirectoryNode currentDir = rootDir;
-            List<DirectoryNode> dirs = new() { rootDir };
+            List<DirectoryNode> dirs = [rootDir];
 
             foreach (string line in lines)
                 currentDir = ProcessLine(line, currentDir, dirs);
@@ -67,8 +67,8 @@ namespace AdventOfCode.Year2022.Day07
         {
             public required string Name { get; set; }
             public DirectoryNode? Parent { get; set; }
-            public List<DirectoryNode> Dirs { get; set; } = new();
-            public List<FileRecord> Files { get; set; } = new();
+            public List<DirectoryNode> Dirs { get; set; } = [];
+            public List<FileRecord> Files { get; set; } = [];
 
             public long GetDirectorySize()
             {

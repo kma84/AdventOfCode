@@ -51,7 +51,7 @@ namespace AdventOfCode.Year2022.Day16
         private static List<TreeNode> CreateExpandedTreePart1(List<Node> nodes, Dictionary<(string source, string target), int> pathsLength, int minutes)
         {
             var nodesWithFlowRatePositive = nodes.Where(n => n.FlowRate > 0).ToImmutableList();
-            Dictionary<string, int> cache = new();
+            Dictionary<string, int> cache = [];
 
             TreeNode root = new(nodes[0].Name) { ClosedNodes = nodesWithFlowRatePositive };
             root.AdjacentNodes.AddRange(GetDecendentsPart1(root, pathsLength, minutes, cache));
@@ -61,7 +61,7 @@ namespace AdventOfCode.Year2022.Day16
 
         private static List<Node> GetDecendentsPart1(TreeNode current, Dictionary<(string source, string target), int> pathsLength, int minutes, Dictionary<string, int> cache)
         {
-            List<Node> branch = new();
+            List<Node> branch = [];
 
             if (minutes > 2)
             {
@@ -77,19 +77,19 @@ namespace AdventOfCode.Year2022.Day16
                             ClosedNodes = current.ClosedNodes.Remove(next)
                         };
 
-                        if (newNode.ClosedNodes.Any())
+                        if (!newNode.ClosedNodes.IsEmpty)
                         {
                             string key = GetKeyNodeStr(newNode, remainingMinutes);
 
-                            if (cache.ContainsKey(key))
+                            if (cache.TryGetValue(key, out int flowRate))
                             {
-                                newNode.FlowRate = cache[key];
+                                newNode.FlowRate = flowRate;
                             }
                             else
                             {
                                 newNode.AdjacentNodes.AddRange(GetDecendentsPart1(newNode, pathsLength, remainingMinutes, cache));
 
-                                if (newNode.ClosedNodes.Any())
+                                if (!newNode.ClosedNodes.IsEmpty)
                                 {
                                     cache.Add(key, newNode.FlowRate + GetLongestPathLength(TopologicalSort(newNode)));
                                 }
@@ -117,7 +117,7 @@ namespace AdventOfCode.Year2022.Day16
         private static List<TreeNode> CreateExpandedTreePart2(List<Node> nodes, Dictionary<(string source, string target), int> pathsLength, int minutes)
         {
             var nodesWithFlowRatePositive = nodes.Where(n => n.FlowRate > 0).ToImmutableList();
-            Dictionary<string, int> cache = new();
+            Dictionary<string, int> cache = [];
 
             TreeNodeP2 root = new(nodes[0].Name, nodes[0], nodes[0])
             {
@@ -135,7 +135,7 @@ namespace AdventOfCode.Year2022.Day16
             //ConcurrentBag<TreeNodeP2> nextStates = new();
             //Parallel.ForEach(current.ClosedNodes, (Node closedNode) =>
 
-            List<TreeNodeP2> nextStates = new();
+            List<TreeNodeP2> nextStates = [];
             foreach (Node closedNode in current.ClosedNodes)
             {
                 int humanRemainingMinutes = Math.Max(humanMinutes - pathsLength[(current.HumanCurrentNode.Name, closedNode.Name)], 0);
@@ -161,11 +161,11 @@ namespace AdventOfCode.Year2022.Day16
 
                     string key = GetKeyNodeStrPart2(newNode, newHumanRemainingMinutes, newElephantRemainingMinutes);
 
-                    if (newNode.ClosedNodes.Any())
+                    if (!newNode.ClosedNodes.IsEmpty)
                     {
-                        if (cache.ContainsKey(key))
+                        if (cache.TryGetValue(key, out int flowRate))
                         {
-                            newNode.FlowRate = cache[key];
+                            newNode.FlowRate = flowRate;
                         }
                         else
                         {
@@ -178,13 +178,13 @@ namespace AdventOfCode.Year2022.Day16
                 }
             }
 
-            return nextStates.ToList();
+            return [.. nextStates];
         }
 
 
         private static List<TreeNode> TopologicalSort(TreeNode startNode)
         {
-            List<TreeNode> sortedNodes = new();
+            List<TreeNode> sortedNodes = [];
             Queue<TreeNode> nodesWithNoIncomingEdges = new();
             nodesWithNoIncomingEdges.Enqueue(startNode);
 
@@ -203,7 +203,7 @@ namespace AdventOfCode.Year2022.Day16
 
         private static List<Node> GetNodes(string[] lines)
         {
-            SortedList<string, Node> nodes = new();
+            SortedList<string, Node> nodes = [];
 
             foreach (string line in lines)
             {
@@ -219,7 +219,7 @@ namespace AdventOfCode.Year2022.Day16
                 }
             }
 
-            return nodes.Values.ToList();
+            return [.. nodes.Values];
 
             static Node GetOrCreateNode(SortedList<string, Node> nodes, string nodeName)
             {
@@ -235,7 +235,7 @@ namespace AdventOfCode.Year2022.Day16
 
         private static Dictionary<(string source, string target), int> GetPathsLength(List<Node> nodes)
         {
-            Dictionary<(string source, string target), int> pathsLength = new();
+            Dictionary<(string source, string target), int> pathsLength = [];
 
             foreach (Node node in nodes)
             {
@@ -283,39 +283,26 @@ namespace AdventOfCode.Year2022.Day16
                 currentPathNode = prev[currentPathNode];
             }
 
-            return path.ToList();
+            return [.. path];
         }
 
-        private class Node
+        private class Node(string name)
         {
-            public List<Node> AdjacentNodes { get; set; } = new();
+            public List<Node> AdjacentNodes { get; set; } = [];
             public int FlowRate { get; set; }
-            public string Name { get; set; }
-
-            public Node(string name)
-            {
-                Name = name;
-            }
+            public string Name { get; set; } = name;
         }
 
-        private class TreeNode : Node
+        private class TreeNode(string name) : Node(name)
         {
             // Closed valves in the universe of this node (for the expanded tree)
-            public ImmutableList<Node> ClosedNodes { get; set; } = ImmutableList<Node>.Empty;
-
-            public TreeNode(string name) : base(name) { }
+            public ImmutableList<Node> ClosedNodes { get; set; } = [];
         }
 
-        private class TreeNodeP2 : TreeNode
+        private class TreeNodeP2(string name, Node humanCurrent, Node elephantCurrent) : TreeNode(name)
         {
-            public Node HumanCurrentNode { get; set; }
-            public Node ElephantCurrentNode { get; set; }
-
-            public TreeNodeP2(string name, Node humanCurrent, Node elephantCurrent) : base(name)
-            {
-                HumanCurrentNode = humanCurrent;
-                ElephantCurrentNode = elephantCurrent;
-            }
+            public Node HumanCurrentNode { get; set; } = humanCurrent;
+            public Node ElephantCurrentNode { get; set; } = elephantCurrent;
         }
 
         [GeneratedRegex("Valve ([A-Z]{2}) has flow rate=(\\d+); tunnels? leads? to valves? (.*?)$")]

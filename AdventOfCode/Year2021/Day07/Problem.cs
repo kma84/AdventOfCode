@@ -16,7 +16,7 @@ namespace AdventOfCode.Year2021.Day07
 
             for (int d = 0; d <= maxDistancia; d++)
             {
-                ConsumoFuel consumoDistanciaActual = new ConsumoFuel { DistanciaDestino = d };
+                ConsumoFuel consumoDistanciaActual = new() { DistanciaDestino = d };
 
                 foreach (int position in positions)
                 {
@@ -42,7 +42,7 @@ namespace AdventOfCode.Year2021.Day07
 
             for (int d = 0; d <= maxDistancia; d++)
             {
-                ConsumoFuel consumoDistanciaActual = new ConsumoFuel { DistanciaDestino = d };
+                ConsumoFuel consumoDistanciaActual = new() { DistanciaDestino = d };
 
                 foreach (int position in positions)
                 {
@@ -62,17 +62,7 @@ namespace AdventOfCode.Year2021.Day07
         }
 
 
-        private static int CalcularConsumoFuel(int distancia)
-        {
-            int fuel = 0;
-
-            for (int d = 1; d <= distancia; d++)
-            {
-                fuel += d;
-            }
-
-            return fuel;
-        }
+        private static int CalcularConsumoFuel(int dist) => dist / 2 * (1 + dist);
 
 
         public class ConsumoFuel

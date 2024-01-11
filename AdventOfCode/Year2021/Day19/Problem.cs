@@ -9,6 +9,8 @@ namespace AdventOfCode.Year2021.Day19
     {
         public bool Debug { get; set; } = false;
 
+        internal static readonly char[] SEPARATORS = ['(', ')', ','];
+
         public string Part1(string input)
         {
             List<Scanner> scanners = GetInput(input);
@@ -53,7 +55,7 @@ namespace AdventOfCode.Year2021.Day19
                 }
             }
 
-            HashSet<(int x, int y, int z)> scannersPoints = new() { (0, 0, 0) };
+            HashSet<(int x, int y, int z)> scannersPoints = [(0, 0, 0)];
             scanners[0].Merged = true;
             foreach (Collision collision in scanners[0].Collisions.Where(c => !c.TargetScanner.Merged))
             {
@@ -88,7 +90,7 @@ namespace AdventOfCode.Year2021.Day19
         }
 
 
-        private List<(int x, int y, int z)> GetScannerPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
+        private static List<(int x, int y, int z)> GetScannerPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
         {
             foreach (string rotation in Config.ROTATIONS)
             {
@@ -101,7 +103,7 @@ namespace AdventOfCode.Year2021.Day19
                 var intersection = scannerA.Beacons.Intersect(lstRotatedPointsRelToA);
                 if (intersection.Count() >= Config.MIN_OVERLAPPING_BEACONS - 1)
                 {
-                    HashSet<(int x, int y, int z)> hSetScannerPoints = new() { scannerCoordsRelToA };
+                    HashSet<(int x, int y, int z)> hSetScannerPoints = [scannerCoordsRelToA];
 
                     foreach (Collision collision in scannerB.Collisions.Where(c => !c.TargetScanner.Merged))
                     {
@@ -111,7 +113,7 @@ namespace AdventOfCode.Year2021.Day19
                         hSetScannerPoints.UnionWith(SumScannerCoords(newPointsRotated, scannerCoordsRelToA));
                     }
 
-                    return hSetScannerPoints.ToList();
+                    return [.. hSetScannerPoints];
                 }
             }
 
@@ -119,7 +121,7 @@ namespace AdventOfCode.Year2021.Day19
         }
 
 
-        private List<(int x, int y, int z)> GetPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
+        private static List<(int x, int y, int z)> GetPointsRelativeToA(Scanner scannerA, Scanner scannerB, (int x, int y, int z) pointA, (int x, int y, int z) pointB)
         {
             foreach (string rotation in Config.ROTATIONS)
             {
@@ -182,7 +184,7 @@ namespace AdventOfCode.Year2021.Day19
 
         private static List<(int x, int y, int z)> RotatePoints(List<(int x, int y, int z)> points, string rotation)
         {
-            List<(int x, int y, int z)> rotatedPoints = new();
+            List<(int x, int y, int z)> rotatedPoints = [];
 
             foreach (var point in points)
                 rotatedPoints.Add(RotatePoint(point, rotation));
@@ -193,7 +195,7 @@ namespace AdventOfCode.Year2021.Day19
 
         private static (int x, int y, int z) RotatePoint((int x, int y, int z) point, string rotation)
         {
-            string[] rotationParts = rotation.Split(new char[] { '(', ')', ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] rotationParts = rotation.Split(SEPARATORS, StringSplitOptions.RemoveEmptyEntries);
 
             return (GetCoord(point, rotationParts[0]), GetCoord(point, rotationParts[1]), GetCoord(point, rotationParts[2]));
         }
@@ -213,21 +215,21 @@ namespace AdventOfCode.Year2021.Day19
         {
             string[] rows = input.GetLines();
 
-            List<Scanner> scanners = new();
-            List<(int x, int y, int z)> beacons = new();
+            List<Scanner> scanners = [];
+            List<(int x, int y, int z)> beacons = [];
             int scannerIndex = 0;
 
             foreach (string row in rows)
             {
                 if (row.StartsWith("---"))
                 {
-                    beacons = new();
+                    beacons = [];
                 }
                 else
                 {
                     string[] numbers = row.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-                    if (numbers.Any())
+                    if (numbers.Length != 0)
                     {
                         beacons.Add((int.Parse(numbers[0]), int.Parse(numbers[1]), int.Parse(numbers[2])));
                     }
@@ -247,7 +249,7 @@ namespace AdventOfCode.Year2021.Day19
         {
             public const int MIN_OVERLAPPING_BEACONS = 12;
 
-            public static readonly List<string> ROTATIONS = new() {
+            public static readonly List<string> ROTATIONS = [
                 "(x,y,z)",
                 "(x,y,-z)",
                 "(x,-y,z)",
@@ -296,40 +298,29 @@ namespace AdventOfCode.Year2021.Day19
                 "(-z,y,-x)",
                 "(-z,-y,x)",
                 "(-z,-y,-x)"
-            };
-
-            //public static bool debug = false;
-            //public static string input = "input.txt"; // "input.txt" "inputTest.txt" "inputTest2.txt"
+            ];
         }
 
 
-        private class Scanner
+        private class Scanner(List<(int x, int y, int z)> beacons, int id)
         {
-            public int Id { get; set; }
+            public int Id { get; set; } = id;
 
             public bool Merged { get; set; } = false;
 
-            public List<(int x, int y, int z)> Beacons { get; set; } = new();
+            public List<(int x, int y, int z)> Beacons { get; set; } = beacons;
 
-            public List<List<double>> Distances { get; set; } = new();
+            public List<List<double>> Distances { get; set; } = GetDistances(beacons);
 
-            public List<Collision> Collisions { get; set; } = new();
-
-            public Scanner(List<(int x, int y, int z)> beacons, int id)
-            {
-                Beacons = beacons;
-                Distances = GetDistances(beacons);
-                Id = id;
-            }
-
+            public List<Collision> Collisions { get; set; } = [];
 
             private static List<List<double>> GetDistances(List<(int x, int y, int z)> points)
             {
-                List<List<double>> distances = new();
+                List<List<double>> distances = [];
 
                 for (int i = 0; i < points.Count; i++)
                 {
-                    distances.Add(new List<double>());
+                    distances.Add([]);
 
                     for (int j = 0; j < points.Count; j++)
                     {
@@ -354,20 +345,12 @@ namespace AdventOfCode.Year2021.Day19
             public override string ToString() => $"Scanner{Id}";
         }
 
-        private class Collision
+        private class Collision(Scanner sourceScanner, (int x, int y, int z) sourcePoint, Scanner targetScanner, (int x, int y, int z) targetPoint)
         {
-            public Scanner TargetScanner { get; set; }
-            public Scanner SourceScanner { get; set; }
-            public (int x, int y, int z) SourcePoint { get; set; }
-            public (int x, int y, int z) TargetPoint { get; set; }
-
-            public Collision(Scanner sourceScanner, (int x, int y, int z) sourcePoint, Scanner targetScanner, (int x, int y, int z) targetPoint)
-            {
-                TargetScanner = targetScanner;
-                SourceScanner = sourceScanner;
-                SourcePoint = sourcePoint;
-                TargetPoint = targetPoint;
-            }
+            public Scanner TargetScanner { get; set; } = targetScanner;
+            public Scanner SourceScanner { get; set; } = sourceScanner;
+            public (int x, int y, int z) SourcePoint { get; set; } = sourcePoint;
+            public (int x, int y, int z) TargetPoint { get; set; } = targetPoint;
         }
     }
 }

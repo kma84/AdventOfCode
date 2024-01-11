@@ -124,8 +124,8 @@ namespace AdventOfCode.Year2021.Day20
 
         private static string GetPixels(char[,] image, int x, int y, char infinitePixel)
         {
-            List<char> pixels = new()
-            {
+            List<char> pixels =
+            [
                 y - 1 >= 0 && x - 1 >= 0 ? image[y - 1, x - 1] : infinitePixel,
                 y - 1 >= 0 ? image[y - 1, x] : infinitePixel,
                 y - 1 >= 0 && x + 1 < image.GetLength(1) ? image[y - 1, x + 1] : infinitePixel,
@@ -135,7 +135,7 @@ namespace AdventOfCode.Year2021.Day20
                 y + 1 < image.GetLength(0) && x - 1 >= 0 ? image[y + 1, x - 1] : infinitePixel,
                 y + 1 < image.GetLength(0) ? image[y + 1, x] : infinitePixel,
                 y + 1 < image.GetLength(0) && x + 1 < image.GetLength(1) ? image[y + 1, x + 1] : infinitePixel
-            };
+            ];
 
             return new string(pixels.ToArray());
         }
@@ -188,7 +188,7 @@ namespace AdventOfCode.Year2021.Day20
         private static List<char> GetInfinitePixels(string enhancementAlgorithm)
         {
             char firstPixel = enhancementAlgorithm[0];
-            List<char> infinitePixels = new() { firstPixel };
+            List<char> infinitePixels = [firstPixel];
 
             if (firstPixel == LIGHT_PIXEL)
                 infinitePixels.Insert(0, enhancementAlgorithm.Last());

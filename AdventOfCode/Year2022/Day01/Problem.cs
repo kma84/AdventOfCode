@@ -11,8 +11,10 @@ namespace AdventOfCode.Year2022.Day01
 
         public string Part2(string input) => GetCaloriesByElf(input).OrderByDescending(c => c).Take(3).Sum().ToString();
 
+        internal static readonly string[] SEPARATORS = ["\r\n\r\n", "\n\n"];
+
         private static IEnumerable<int> GetCaloriesByElf(string input) =>
-            input.Split(new string[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.None)
+            input.Split(SEPARATORS, StringSplitOptions.None)
                  .Select(caloriesStr => caloriesStr.GetLines(StringSplitOptions.RemoveEmptyEntries).Select(c => int.Parse(c)).Sum());
     }
 }

@@ -69,7 +69,7 @@ namespace AdventOfCode.Year2021.Day22
 
         private static long GetArea(List<Cuboid> cuboids, Dictionary<List<Cuboid>, long> cache)
         {
-            if (!cuboids.Any())
+            if (cuboids.Count == 0)
                 return 0;
 
             if (cuboids.Count == 1)
@@ -78,7 +78,7 @@ namespace AdventOfCode.Year2021.Day22
             if (cache.TryGetValue(cuboids, out long value))
                 return value;
 
-            List<Cuboid> intersections = new();
+            List<Cuboid> intersections = [];
             for (int i = 1; i < cuboids.Count; i++)
             {
                 Cuboid? intersectionCuboid = GetIntersectionCuboid(cuboids[0], cuboids[i]);
@@ -107,7 +107,7 @@ namespace AdventOfCode.Year2021.Day22
             };
 
             string[] lines = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
-            List <Step> steps = new();
+            List <Step> steps = [];
 
             foreach (string line in lines)
             {
@@ -142,17 +142,11 @@ namespace AdventOfCode.Year2021.Day22
         }
 
 
-        class Step
+        class Step(bool turnOn, Cuboid cuboid)
         {
-            public Step(bool turnOn, Cuboid cuboid)
-            {
-                TurnOn = turnOn;
-                Cuboid = cuboid;
-            }
+            public bool TurnOn { get; set; } = turnOn;
 
-            public bool TurnOn { get; set; }
-
-            public Cuboid Cuboid { get; set; }
+            public Cuboid Cuboid { get; set; } = cuboid;
         }
 
 
@@ -160,7 +154,7 @@ namespace AdventOfCode.Year2021.Day22
         {
             public Cuboid(long x1, long x2, long y1, long y2, long z1, long z2)
             {
-                Coords = new() { x1, x2, y1, y2, z1, z2 };
+                Coords = [x1, x2, y1, y2, z1, z2];
             }
 
             public List<long> Coords { get; set; }

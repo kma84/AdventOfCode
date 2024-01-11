@@ -71,19 +71,13 @@ namespace AdventOfCode.Utils.Extensions
         {
             CheckBounds(matrix, x, y);
 
-            List<(int x, int y, T value)> crossAdjacents = new();
-
-            if (y - 1 >= 0)
-                crossAdjacents.Add((x, y - 1, matrix[y - 1, x]));
-
-            if (x + 1 < matrix.GetLength(1))
-                crossAdjacents.Add((x + 1, y, matrix[y, x + 1]));
-
-            if (y + 1 < matrix.GetLength(0))
-                crossAdjacents.Add((x, y + 1, matrix[y + 1, x]));
-
-            if (x - 1 >= 0)
-                crossAdjacents.Add((x - 1, y, matrix[y, x - 1]));
+            List<(int x, int y, T value)> crossAdjacents =
+            [
+                .. y - 1 >= 0 ? [(x, y - 1, matrix[y - 1, x])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. x + 1 < matrix.GetLength(1) ? [(x + 1, y, matrix[y, x + 1])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. y + 1 < matrix.GetLength(0) ? [(x, y + 1, matrix[y + 1, x])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. x - 1 >= 0 ? [(x - 1, y, matrix[y, x - 1])] : (ReadOnlySpan<(int, int, T)>)[],
+            ];
 
             return crossAdjacents;
         }
@@ -91,19 +85,14 @@ namespace AdventOfCode.Utils.Extensions
 
         public static List<(int x, int y, T value)> GetAdjacents<T>(this T[,] matrix, int x, int y)
         {
-            List<(int x, int y, T value)> adjacents = matrix.GetCrossAdjacents(x, y);
-
-            if (y - 1 >= 0 && x - 1 >= 0)
-                adjacents.Add((x - 1, y - 1, matrix[y - 1, x - 1]));
-
-            if (y - 1 >= 0 && x + 1 < matrix.GetLength(1))
-                adjacents.Add((x + 1, y - 1, matrix[y - 1, x + 1]));
-
-            if (y + 1 < matrix.GetLength(0) && x - 1 >= 0)
-                adjacents.Add((x - 1, y + 1, matrix[y + 1, x - 1]));
-
-            if (y + 1 < matrix.GetLength(0) && x + 1 < matrix.GetLength(1))
-                adjacents.Add((x + 1, y + 1, matrix[y + 1, x + 1]));
+            List <(int x, int y, T value)> adjacents =
+            [
+                .. matrix.GetCrossAdjacents(x, y).ToArray(),
+                .. y - 1 >= 0 && x - 1 >= 0 ? [(x - 1, y - 1, matrix[y - 1, x - 1])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. y - 1 >= 0 && x + 1 < matrix.GetLength(1) ? [(x + 1, y - 1, matrix[y - 1, x + 1])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. y + 1 < matrix.GetLength(0) && x - 1 >= 0 ? [(x - 1, y + 1, matrix[y + 1, x - 1])] : (ReadOnlySpan<(int, int, T)>)[],
+                .. y + 1 < matrix.GetLength(0) && x + 1 < matrix.GetLength(1) ? [(x + 1, y + 1, matrix[y + 1, x + 1])] : (ReadOnlySpan<(int, int, T)>)[],
+            ];
 
             return adjacents;
         }

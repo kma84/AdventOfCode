@@ -1,7 +1,7 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils.Extensions;
 using AdventOfCode.Utils;
+using AdventOfCode.Utils.Extensions;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.Year2023.Day08
@@ -60,7 +60,7 @@ namespace AdventOfCode.Year2023.Day08
 
         private static Dictionary<string, List<string>> GetElements(IEnumerable<string> lines)
         {
-            Dictionary<string, List<string>> elements = new();
+            Dictionary<string, List<string>> elements = [];
 
             foreach (string line in lines)
             {
@@ -70,14 +70,14 @@ namespace AdventOfCode.Year2023.Day08
                 string left = match.Groups[2].Value;
                 string right = match.Groups[3].Value;
 
-                elements.Add(element, new List<string> { left, right });
+                elements.Add(element, [left, right]);
             }
 
             return elements;
         }
 
 
-        internal enum Instruction 
+        internal enum Instruction
         {
             Left = 0,
             Right

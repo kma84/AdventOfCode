@@ -85,7 +85,7 @@ namespace AdventOfCode.Year2021.Day02
         {
             string[] movs = input.GetLines();
 
-            List<Movimiento> Movimientos = new();
+            List<Movimiento> Movimientos = [];
 
             foreach (string mov in movs)
             {

@@ -2,10 +2,10 @@
 {
     public static class StringExtensions
     {
+        private static readonly string[] SEPARATORS = ["\r\n", "\r", "\n"];
 
         public static string[] GetLines(this string str) => str.GetLines(StringSplitOptions.None);
 
-        public static string[] GetLines(this string str, StringSplitOptions options) => str.Split(new string[] { "\r\n", "\r", "\n" }, options);
-
+        public static string[] GetLines(this string str, StringSplitOptions options) => str.Split(SEPARATORS, options);
     }
 }

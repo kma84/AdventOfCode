@@ -39,7 +39,7 @@ namespace AdventOfCode.Year2022.Day05
 
         private static (List<List<char>> cratesLists, List<Movement> movements) ParseInput(string input)
         {
-            List<string> lines = input.GetLines().ToList();
+            List<string> lines = [.. input.GetLines()];
             IEnumerable<string> stackLines = lines.Take(lines.IndexOf(string.Empty) - 1);
             IEnumerable<string> movsLines = lines.Skip(stackLines.Count() + 2);
 

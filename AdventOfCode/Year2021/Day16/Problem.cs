@@ -159,31 +159,20 @@ namespace AdventOfCode.Year2021.Day16
         };
 
 
-        private abstract class Packet
+        private abstract class Packet(int version, int typeId)
         {
-            public int Version { get; set; }
-            public int TypeId { get; set; }
-
-            public Packet(int version, int typeId)
-            {
-                Version = version;
-                TypeId = typeId;
-            }
+            public int Version { get; set; } = version;
+            public int TypeId { get; set; } = typeId;
 
             public abstract int SumOfVersions();
             public abstract long GetResult();
         }
 
-        private class LiteralPacket : Packet
+        private class LiteralPacket(int version, int typeId, string binaryNumber) : Packet(version, typeId)
         {
-            public string BinaryNumber { get; set; }
+            public string BinaryNumber { get; set; } = binaryNumber;
 
             public override long GetResult() => Convert.ToInt64(BinaryNumber, 2);
-
-            public LiteralPacket(int version, int typeId, string binaryNumber) : base(version, typeId)
-            {
-                BinaryNumber = binaryNumber;
-            }
 
             public override int SumOfVersions()
             {
@@ -193,7 +182,7 @@ namespace AdventOfCode.Year2021.Day16
 
         private abstract class OperatorPacket : Packet
         {
-            public List<Packet> SubPackets { get; set; } = new List<Packet>();
+            public List<Packet> SubPackets { get; set; } = [];
 
             protected OperatorPacket(int version, int typeId) : base(version, typeId)
             {
@@ -205,66 +194,38 @@ namespace AdventOfCode.Year2021.Day16
             }
         }
 
-        private class SumOperatorPacket : OperatorPacket
+        private class SumOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public SumOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets.Sum(sp => sp.GetResult());
         }
 
-        private class ProductOperatorPacket : OperatorPacket
+        private class ProductOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public ProductOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets.Aggregate(seed: 1L, func: (result, packet) => result * packet.GetResult());
         }
 
-        private class MinOperatorPacket : OperatorPacket
+        private class MinOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public MinOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets.Min(sp => sp.GetResult());
         }
 
-        private class MaxOperatorPacket : OperatorPacket
+        private class MaxOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public MaxOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets.Max(sp => sp.GetResult());
         }
 
-        private class GreaterThanOperatorPacket : OperatorPacket
+        private class GreaterThanOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public GreaterThanOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets[0].GetResult() > SubPackets[1].GetResult() ? 1 : 0;
         }
 
-        private class LessThanOperatorPacket : OperatorPacket
+        private class LessThanOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public LessThanOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets[0].GetResult() < SubPackets[1].GetResult() ? 1 : 0;
         }
 
-        private class EqualOperatorPacket : OperatorPacket
+        private class EqualOperatorPacket(int version, int typeId) : OperatorPacket(version, typeId)
         {
-            public EqualOperatorPacket(int version, int typeId) : base(version, typeId)
-            {
-            }
-
             public override long GetResult() => SubPackets[0].GetResult() == SubPackets[1].GetResult() ? 1 : 0;
         }
     }

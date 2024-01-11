@@ -53,7 +53,7 @@ namespace AdventOfCode.Year2022.Day15
         private static List<(int x, int y, bool startOrEnd)> GetIntervals(List<Sensor> sensors, int y)
         {
             // Indexes where the exclusion zones of each sensor begin and end (for line y). True for begin, false for end.
-            List<(int x, int y, bool startOrEnd)> intervals = new();
+            List<(int x, int y, bool startOrEnd)> intervals = [];
 
             foreach (Sensor sensor in sensors.Where(s => s.ExclusionZone.pointA.Y <= y && s.ExclusionZone.pointC.Y >= y))
             {
@@ -74,7 +74,7 @@ namespace AdventOfCode.Year2022.Day15
         {
             var orderedIntervals = intervals.OrderBy(i => i.x).ThenByDescending(i => i.startOrEnd);
 
-            List<(int x, int y, bool startOrEnd)> newIntervals = new();
+            List<(int x, int y, bool startOrEnd)> newIntervals = [];
             Stack<(int x, int y, bool startOrEnd)> stack = new();
 
             foreach (var currentPair in orderedIntervals)
@@ -87,7 +87,7 @@ namespace AdventOfCode.Year2022.Day15
                 {
                     var intervalStart = stack.Pop();
 
-                    if (!stack.Any())
+                    if (stack.Count == 0)
                     {
                         newIntervals.Add(intervalStart);
                         newIntervals.Add(currentPair);
@@ -112,7 +112,7 @@ namespace AdventOfCode.Year2022.Day15
 
         private static List<Sensor> GetSensorsInfo(string[] lines)
         {
-            List <Sensor> sensors = new ();
+            List <Sensor> sensors = [];
 
             foreach (string line in lines)
             {
@@ -127,18 +127,11 @@ namespace AdventOfCode.Year2022.Day15
         }
 
 
-        private class Sensor
+        private class Sensor(Point sensorPoint, Point closestBeacon)
         {
-            public Point SensorPoint { get; set; }
-            public Point ClosestBeacon { get; set; }
-            public (Point pointA, Point pointB, Point pointC, Point pointD) ExclusionZone { get; set; }
-
-            public Sensor(Point sensorPoint, Point closestBeacon)
-            {
-                SensorPoint = sensorPoint;
-                ClosestBeacon = closestBeacon;
-                ExclusionZone = GetExclusionZone(sensorPoint, closestBeacon);
-            }
+            public Point SensorPoint { get; set; } = sensorPoint;
+            public Point ClosestBeacon { get; set; } = closestBeacon;
+            public (Point pointA, Point pointB, Point pointC, Point pointD) ExclusionZone { get; set; } = GetExclusionZone(sensorPoint, closestBeacon);
 
             private static (Point pointA, Point pointB, Point pointC, Point pointD) GetExclusionZone(Point sensorPoint, Point closestBeacon)
             {

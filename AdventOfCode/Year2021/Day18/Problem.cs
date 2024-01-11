@@ -135,7 +135,7 @@ namespace AdventOfCode.Year2021.Day18
         private static (SnailfishNumber, List<RegularNumber>) ParseNumber(string numberStr)
         {
             PairNumber? currentNumber = null;
-            List<RegularNumber> regularNumbers = new();
+            List<RegularNumber> regularNumbers = [];
 
             foreach (char c in numberStr)
             {
@@ -197,14 +197,9 @@ namespace AdventOfCode.Year2021.Day18
             public abstract int GetMagnitude();
         }
 
-        private class RegularNumber : SnailfishNumber
+        private class RegularNumber(int value) : SnailfishNumber
         {
-            public int Value { get; set; }
-
-            public RegularNumber(int value)
-            {
-                Value = value;
-            }
+            public int Value { get; set; } = value;
 
             public override string ToString()
             {

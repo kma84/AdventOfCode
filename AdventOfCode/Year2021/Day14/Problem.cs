@@ -70,7 +70,7 @@ namespace AdventOfCode.Year2021.Day14
 
         private static Dictionary<char, long> GetLetters(string template, Dictionary<string, char> rules)
         {
-            Dictionary<char, long> letters = new();
+            Dictionary<char, long> letters = [];
 
             foreach (char letter in rules.Values.Distinct())
             {
@@ -88,7 +88,7 @@ namespace AdventOfCode.Year2021.Day14
 
         private static List<Node> GetNodes(string template, Dictionary<string, char> rules)
         {
-            Dictionary<string, Node> nodes = new();
+            Dictionary<string, Node> nodes = [];
 
             foreach (var ruleKvp in rules)
             {
@@ -110,7 +110,7 @@ namespace AdventOfCode.Year2021.Day14
                 i++;
             }
 
-            return nodes.Values.ToList();
+            return [.. nodes.Values];
         }
 
 
@@ -135,9 +135,9 @@ namespace AdventOfCode.Year2021.Day14
             {
                 string pair = polymer.Substring(i, 2);
 
-                if (rules.ContainsKey(pair))
+                if (rules.TryGetValue(pair, out char item))
                 {
-                    polymer = polymer.Insert(i + 1, rules[pair].ToString());
+                    polymer = polymer.Insert(i + 1, item.ToString());
                     i++;
                 }
 
@@ -153,7 +153,7 @@ namespace AdventOfCode.Year2021.Day14
             string[] lines = input.GetLines(StringSplitOptions.RemoveEmptyEntries);
 
             string template = lines.First();
-            Dictionary<string, char> rules = new();
+            Dictionary<string, char> rules = [];
 
             foreach (string line in lines.Skip(1))
             {
@@ -165,20 +165,14 @@ namespace AdventOfCode.Year2021.Day14
         }
 
 
-        private class Node
+        private class Node(string value, char newElement)
         {
-            public string Value { get; set; }
-            public char NewElement { get; set; }
+            public string Value { get; set; } = value;
+            public char NewElement { get; set; } = newElement;
             public long Ocurrences { get; set; } = 0;
             public long Increment { get; set; } = 0;
             public Node? Node1 { get; set; }
             public Node? Node2 { get; set; }
-
-            public Node(string value, char newElement)
-            {
-                Value = value;
-                NewElement = newElement;
-            }
 
             public void ApplyIncrement()
             {

@@ -13,7 +13,7 @@ namespace AdventOfCode.Year2021.Day03
 
         public string Part1(string input)
         {
-            List<string> diagnostico = input.GetLines().ToList();
+            List<string> diagnostico = [.. input.GetLines()];
 
             string gammaRateStr = string.Empty;
             string epsilonRateStr = string.Empty;
@@ -42,7 +42,7 @@ namespace AdventOfCode.Year2021.Day03
 
         public string Part2(string input)
         {
-            List<string> diagnostico = input.GetLines().ToList();
+            List<string> diagnostico = [.. input.GetLines()];
 
             string oxygenGeneratorRatingStr = string.Empty;
             string co2ScrubberRatingStr = string.Empty;

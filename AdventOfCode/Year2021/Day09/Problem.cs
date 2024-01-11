@@ -30,8 +30,8 @@ namespace AdventOfCode.Year2021.Day09
 
         public string Part2(string input)
         {
-            List<(int, int)> puntosComprobados = new();
-            List<int> basinSizes = new(); 
+            List<(int, int)> puntosComprobados = [];
+            List<int> basinSizes = []; 
             
             int[,] heightmap = InputUtils.ParseIntMatrix(input);
             List<(int x, int y)> puntosBajos = GetPuntosBajos(heightmap);
@@ -55,7 +55,7 @@ namespace AdventOfCode.Year2021.Day09
             int maxY = mapa.GetLength(0);
             int maxX = mapa.GetLength(1);
 
-            List<(int x, int y)> puntosBajos = new();
+            List<(int x, int y)> puntosBajos = [];
 
             for (int y = 0; y < maxY; y++)
             {

@@ -68,7 +68,7 @@ namespace AdventOfCode.Year2021.Day13
 
         private static (char[,] paper, List<(FoldDirection direction, int value)> folds) GetInput(string input)
         {
-            List<string> lines = input.GetLines().ToList();
+            List<string> lines = [.. input.GetLines()];
 
             // Coordinates
             var coordinates = new List<(int x, int y)>();

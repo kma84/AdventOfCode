@@ -27,7 +27,7 @@ namespace AdventOfCode.Year2023.Day04
 
         private static List<Card> GetCards(string input)
         {
-            List<Card> cards = new ();
+            List<Card> cards = [];
 
             foreach (string line in input.GetLines())
             {

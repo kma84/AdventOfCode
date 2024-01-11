@@ -11,7 +11,7 @@ namespace AdventOfCode.Year2021.Day21
         const int MAX_SCORE_PART1 = 1000;
         const int MAX_SCORE_PART2 = 21;
 
-        private static readonly List<(int rollValue, int numUniverses)> NEW_ROLLS = new() {
+        private static readonly List<(int rollValue, int numUniverses)> NEW_ROLLS = [
             ( 3, 1 ),
             ( 4, 3 ),
             ( 5, 6 ),
@@ -19,7 +19,7 @@ namespace AdventOfCode.Year2021.Day21
             ( 7, 6 ),
             ( 8, 3 ),
             ( 9, 1 ),
-        };
+        ];
 
         public bool Debug { get; set; } = false;
 
@@ -61,7 +61,7 @@ namespace AdventOfCode.Year2021.Day21
             long winnerUniversesP2 = 0;
 
             (int player1StartingPosition, int player2StartingPosition) = GetStartingPositions(input);
-            CommonUniverses startingUniverse = new CommonUniverses(player1StartingPosition, player2StartingPosition);
+            CommonUniverses startingUniverse = new(player1StartingPosition, player2StartingPosition);
             Dictionary<CommonUniverses, long> multiverse = new() { { startingUniverse, 1 } };
 
             while (multiverse.Any(d => d.Value > 0))
@@ -81,15 +81,15 @@ namespace AdventOfCode.Year2021.Day21
         private static (Dictionary<CommonUniverses, long> newMultiverse, long winnerUniverses) Roll(Dictionary<CommonUniverses, long> multiverse, int player)
         {
             long winnerUniverses = 0;
-            Dictionary<CommonUniverses, long> newMultiverse = new();
+            Dictionary<CommonUniverses, long> newMultiverse = [];
 
-            foreach (var roll in NEW_ROLLS)
+            foreach (var (rollValue, rollNumUniverses) in NEW_ROLLS)
             {
                 foreach (var kvpUniverses in multiverse)
                 {
-                    long newUniverses = kvpUniverses.Value * roll.numUniverses;
+                    long newUniverses = kvpUniverses.Value * rollNumUniverses;
                     int playerPosition = player == 1 ? kvpUniverses.Key.Player1Position : kvpUniverses.Key.Player2Position;
-                    int newPosition = (playerPosition + roll.rollValue - 1) % BOARD_SPACES + 1;
+                    int newPosition = (playerPosition + rollValue - 1) % BOARD_SPACES + 1;
                     int playerScore = player == 1 ? kvpUniverses.Key.Player1Score : kvpUniverses.Key.Player2Score;
                     int newScore = playerScore + newPosition;
 
@@ -116,7 +116,7 @@ namespace AdventOfCode.Year2021.Day21
 
         private static (int player1StartingPosition, int player2StartingPosition) GetStartingPositions(string input)
         {
-            int GetStartingPosition(string line) => int.Parse(line.Split(':')[1]);
+            static int GetStartingPosition(string line) => int.Parse(line.Split(':')[1]);
             string[] lines = input.GetLines();
 
             return (GetStartingPosition(lines[0]), GetStartingPosition(lines[1]));

@@ -31,7 +31,7 @@ namespace AdventOfCode.Year2023.Day02
 
         private static List<Game> GetGames(string[] lines)
         {
-            List<Game> games = new();
+            List<Game> games = [];
 
             foreach (string line in lines)
             {

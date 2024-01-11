@@ -30,7 +30,7 @@
 
         public List<Range> Except(Range other)
         {
-            List<Range> result = new();
+            List<Range> result = [];
 
             if (other.Start > this.Start && other.Start <= this.End)
             {

@@ -15,10 +15,10 @@ namespace AdventOfCode.Year2021.Day12
         public string Part1(string input)
         {
             NumOfVisitsFirstSmallCave = 1;
-            List<string> paths = new();
+            List<string> paths = [];
 
             Cave startCave = GetInput(input);
-            GetPaths(startCave, new List<Cave>(), paths);
+            GetPaths(startCave, [], paths);
 
             if (Debug)
                 Console.WriteLine(string.Join('\n', paths));
@@ -29,10 +29,10 @@ namespace AdventOfCode.Year2021.Day12
         public string Part2(string input)
         {
             NumOfVisitsFirstSmallCave = 2;
-            List<string> paths = new();
+            List<string> paths = [];
 
             Cave startCave = GetInput(input);
-            GetPaths(startCave, new List<Cave>(), paths);
+            GetPaths(startCave, [], paths);
 
             return paths.Count.ToString();
         }
@@ -78,7 +78,7 @@ namespace AdventOfCode.Year2021.Day12
 
         static Cave GetInput(string input)
         {
-            Dictionary<string, Cave> caves = new();
+            Dictionary<string, Cave> caves = [];
 
             foreach (string line in input.GetLines(StringSplitOptions.RemoveEmptyEntries))
             {
@@ -104,7 +104,7 @@ namespace AdventOfCode.Year2021.Day12
         {
             public string Name { get; set; } = string.Empty;
 
-            public List<Cave> Connections { get; set; } = new();
+            public List<Cave> Connections { get; set; } = [];
 
             public bool IsSmallCave()
             {

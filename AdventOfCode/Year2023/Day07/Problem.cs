@@ -32,19 +32,19 @@ namespace AdventOfCode.Year2023.Day07
         }
 
 
-        private static char JOKER = 'J';
+        private static readonly char JOKER = 'J';
 
         // Cards ordered by strength ascending
-        private static readonly List<char> CARDS = new()
-        {
+        private static readonly List<char> CARDS =
+        [
             '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'
-        };
+        ];
 
         private static int GetTotalWinnings(List<Hand> hands) => hands.Select((h, i) => h.Bid * (i + 1)).Sum();
 
         private List<Hand> GetHands(string[] lines, bool withJokers = false)
         {
-            List<Hand> hands = new();
+            List<Hand> hands = [];
 
             foreach (string line in lines) 
             {
