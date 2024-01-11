@@ -62,7 +62,7 @@ namespace AdventOfCode.Year2021.Day07
         }
 
 
-        private static int CalcularConsumoFuel(int dist) => dist / 2 * (1 + dist);
+        private static int CalcularConsumoFuel(int dist) => (int)(dist / 2F * (1 + dist));
 
 
         public class ConsumoFuel
