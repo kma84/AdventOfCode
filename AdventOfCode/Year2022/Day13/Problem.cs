@@ -1,6 +1,6 @@
 using AdventOfCode.Core;
 using AdventOfCode.Core.Interfaces;
-using AdventOfCode.Utils;
+using AdventOfCode.Utils.Extensions;
 
 namespace AdventOfCode.Year2022.Day13
 {
@@ -20,11 +20,11 @@ namespace AdventOfCode.Year2022.Day13
             string separatorNode2 = "[[6]]";
 
             List<Node> nodes = GetNodes(input.GetLines());
-            List<Node> orderedNodes = new()
-            {
+            List<Node> orderedNodes =
+            [
                 CreateNodeFromLine(separatorNode1, isSeparatorNode: true),
                 CreateNodeFromLine(separatorNode2, isSeparatorNode: true)
-            };
+            ];
 
             foreach (Node nodeToOrder in nodes)
             {
@@ -55,7 +55,7 @@ namespace AdventOfCode.Year2022.Day13
         private static List<Node> GetNodes(string[] lines)
         {
             string[] linesFiltered = lines.Where(l => !string.IsNullOrEmpty(l)).ToArray();
-            List<Node> nodes = new();
+            List<Node> nodes = [];
 
             foreach (string line in linesFiltered)
                 nodes.Add(CreateNodeFromLine(line));
@@ -65,7 +65,7 @@ namespace AdventOfCode.Year2022.Day13
 
         private List<Pair> GetPairs(string[] lines)
         {
-            List<Pair> pairs = new();
+            List<Pair> pairs = [];
             int i = 0;
 
             while (i < lines.Length)
@@ -181,7 +181,7 @@ namespace AdventOfCode.Year2022.Day13
         {
             public int? Value { get; set; }
             public bool IsSeparatorNode { get; set; }
-            public List<Node> SubNodes { get; set; } = new();
+            public List<Node> SubNodes { get; set; } = [];
 
             public Node(bool isSeparatorNode = false)
             {

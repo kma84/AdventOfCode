@@ -40,7 +40,7 @@ namespace AdventOfCode.Year2023.Day08
         private static readonly char END_CHAR = 'Z';
         private static readonly string START_ELEMENT = "AAA";
 
-        private long GetSteps(string element, Dictionary<string, List<string>> elements, List<Instruction> instructions)
+        private static long GetSteps(string element, Dictionary<string, List<string>> elements, List<Instruction> instructions)
         {
             long steps = 0;
             string nextElement = element;
