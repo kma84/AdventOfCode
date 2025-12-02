@@ -8,5 +8,7 @@
         public static long Lcm(long[] numbers) => numbers.Aggregate((a, b) => Math.Abs(a * b) / Gdc(a, b));
         
         private static long Gdc(long a, long b) => b == 0 ? a : Gdc(b, a % b);
+
+        public static int Mod(int a, int b) => (a % b + b) % b;
     }
 }
