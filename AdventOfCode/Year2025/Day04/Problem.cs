@@ -9,7 +9,7 @@ namespace AdventOfCode.Year2025.Day04
     {
         public bool Debug => false;
 
-        public string Part1(string input) => GetAccessibleRolls(GetDiagram(input)).ToString();
+        public string Part1(string input) => GetAccessibleRolls(GetDiagram(input), deleteCheckedRolls: false).ToString();
 
         public string Part2(string input)
         {
@@ -20,7 +20,7 @@ namespace AdventOfCode.Year2025.Day04
 
             do
             {
-                accessibleRolls = GetAccessibleRolls(diagram);
+                accessibleRolls = GetAccessibleRolls(diagram, deleteCheckedRolls: true);
                 totalAccessibleRolls += accessibleRolls;
             } while (accessibleRolls > 0);
 
@@ -31,7 +31,7 @@ namespace AdventOfCode.Year2025.Day04
         private static readonly char ROLL_CHAR = '@';
         private static readonly char ROLL_DELETED_CHAR = 'x';
 
-        private static int GetAccessibleRolls(char[,] diagram)
+        private static int GetAccessibleRolls(char[,] diagram, bool deleteCheckedRolls)
         {
             int accessibleRolls = 0;
 
@@ -42,7 +42,8 @@ namespace AdventOfCode.Year2025.Day04
                     if (diagram[y, x] == ROLL_CHAR && GetAdjacentRollsCount(diagram, y, x) < 4)
                     {
                         accessibleRolls++;
-                        diagram[y, x] = ROLL_DELETED_CHAR;
+                        if (deleteCheckedRolls)
+                            diagram[y, x] = ROLL_DELETED_CHAR;
                     }
                 }
             }
